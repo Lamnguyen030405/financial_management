@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import List
-from financial_management.src.models.tai_khoan import TaiKhoan
-from financial_management.src.models.khoan_vay import KhoanVay
-from financial_management.src.models.giao_dich import GiaoDich
-from financial_management.src.models.danh_muc import DanhMuc
-from financial_management.src.models.phuong_phap_sau_lo import PhuongPhapSauLo
+from src.models.tai_khoan import TaiKhoan
+from src.models.khoan_vay import KhoanVay
+from src.models.giao_dich import GiaoDich
+from src.models.danh_muc import DanhMuc
+from src.models.phuong_phap_sau_lo import PhuongPhapSauLo
 
 class QuanLyTaiChinh:
     def __init__(self):
