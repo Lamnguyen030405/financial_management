@@ -18,5 +18,5 @@ class GiaoDich:
         return self._loai
 
     def cap_nhat_chi_tiet(self, so_tien: float, loai: str):
-        # TODO: Thuc hien cap nhat chi tiet
-        pass
+        self._so_tien = so_tien
+        self._loai = loai
