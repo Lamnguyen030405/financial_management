@@ -1,4 +1,5 @@
-﻿from datetime import datetime
+﻿import csv
+from datetime import datetime
 from typing import List
 from csv import writer
 from src.models.tai_khoan import TaiKhoan
@@ -139,6 +140,64 @@ class QuanLyTaiChinh:
                         giao_dich._ngay, 
                         giao_dich.lay_loai()
                     ])
+    
+    def doc_csv(self, duong_dan: str = "bao_cao_tai_chinh.csv"):
+        """
+        Đọc dữ liệu từ file CSV và nhập vào hệ thống quản lý tài chính
+
+        :param duong_dan: Đường dẫn tới file CSV cần đọc
+        :return: Danh sách các giao dịch đã đọc được
+        """
+        giao_dich_moi = []
+        tai_khoan_dict = {}
+
+        try:
+            with open(duong_dan, 'r', newline='', encoding='utf-8') as file:
+                csv_reader = csv.DictReader(file)
+            
+                for row in csv_reader:
+                    try:
+                        # Tạo tài khoản nếu chưa tồn tại
+                        ten_tai_khoan = row['Tai Khoan']
+                        if ten_tai_khoan not in tai_khoan_dict:
+                            tai_khoan_moi = TaiKhoan(
+                                id=f"TK_{len(tai_khoan_dict) + 1}", 
+                                ten=ten_tai_khoan, 
+                                so_du=float(row['So Du'])
+                            )
+                            self.them_tai_khoan(tai_khoan_moi)
+                            tai_khoan_dict[ten_tai_khoan] = tai_khoan_moi
+
+                        # Tạo giao dịch
+                        giao_dich = GiaoDich(
+                            id=f"GD_{len(giao_dich_moi) + 1}",
+                            id_tai_khoan=tai_khoan_dict[ten_tai_khoan]._id,
+                            so_tien=float(row['So Tien']),
+                            loai=row['Loai'].lower(),
+                            danh_muc=row['Danh Muc'],
+                            ngay=datetime.strptime(row['Ngay'], '%Y-%m-%d %H:%M:%S'),
+                            ghi_chu=""
+                        )
+
+                        # Thêm giao dịch vào hệ thống
+                        if self.them_giao_dich(giao_dich):
+                            giao_dich_moi.append(giao_dich)
+
+                    except (ValueError, KeyError) as e:
+                        print(f"Lỗi khi xử lý dòng: {row}. Chi tiết: {e}")
+                        continue
+
+        except FileNotFoundError:
+            print(f"Không tìm thấy file: {duong_dan}")
+            return []
+        except PermissionError:
+            print(f"Không có quyền đọc file: {duong_dan}")
+            return []
+        except Exception as e:
+            print(f"Lỗi không xác định khi đọc file: {e}")
+            return []
+
+        return giao_dich_moi
 
     def dat_muc_tieu_tiet_kiem(self, id_tai_khoan: str, so_tien: float):
         """
