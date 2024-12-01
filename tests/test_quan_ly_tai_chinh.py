@@ -40,14 +40,22 @@ def xoa_tai_khoan():
     id_tai_khoan = input("Nhập ID tài khoản cần xóa: ")
     quan_ly.xoa_tai_khoan(id_tai_khoan)
     print("Đã xóa tài khoản.")
+    
+def xoa_giao_dich():
+    id_tai_khoan = input("Nhập ID tài khoản của giao dịch cần xóa: ")
+    id_giao_dich = input("Nhập ID của giao dịch cần xóa: ")
+    quan_ly.xoa_giao_dich(id_tai_khoan, id_giao_dich)
+    print("Đã xóa giao dịch.")
 
 def them_giao_dich():
+    id = input("Nhập ID giao dịch: ")
     id_tai_khoan = input("Nhập ID tài khoản: ")
     so_tien = float(input("Nhập số tiền: "))
     loai = input("Nhập loại giao dịch (thu nhập/chi tiêu): ")
     ngay = datetime.strptime(input("Nhập ngày (YYYY-MM-DD): "), "%Y-%m-%d")
     danh_muc = input("Nhập danh mục: ")
-    giao_dich = GiaoDich(id_tai_khoan, so_tien, loai, ngay, danh_muc)
+    ghi_chu = input("Nhập ghi chú: ")
+    giao_dich = GiaoDich(id, id_tai_khoan, so_tien, loai, danh_muc, ngay, ghi_chu)
     if quan_ly.them_giao_dich(giao_dich):
         print("Thêm giao dịch thành công!")
     else:
@@ -81,8 +89,11 @@ def dat_muc_tieu_tiet_kiem():
 def du_bao_xu_huong():
     du_bao = quan_ly.du_bao_xu_huong_tai_chinh()
     print("Dự báo xu hướng tài chính:", du_bao)
+    
+
 
 def main():
+    quan_ly.nhap_csv()
     while True:
         hien_thi_menu()
         lua_chon = chon_menu()
@@ -93,14 +104,12 @@ def main():
         elif lua_chon == 3:
             them_giao_dich()
         elif lua_chon == 4:
-            them_khoan_vay()
+            xoa_giao_dich()
         elif lua_chon == 5:
-            tao_bao_cao()
+            quan_ly.xuat_csv()
         elif lua_chon == 6:
-            dat_muc_tieu_tiet_kiem()
-        elif lua_chon == 7:
-            du_bao_xu_huong()
-        elif lua_chon == 8:
+            quan_ly.nhap_csv()
+        elif lua_chon == 7:    
             print("Thoát chương trình!")
             break
         else:

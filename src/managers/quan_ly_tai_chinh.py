@@ -46,13 +46,15 @@ class QuanLyTaiChinh:
                 return True
         return False
     
-    def xoa_giao_dich(self, giao_dich: GiaoDich):
+    def xoa_giao_dich(self, id_tai_khoan: str, id_giao_dich: str):
         """
         Xoa giao dich o mot tai khoan
         """
         for tai_khoan in self._tai_khoan:
-            if tai_khoan._id == giao_dich._id_tai_khoan:
-                tai_khoan.xoa_giao_dich(giao_dich)
+            if tai_khoan._id == id_tai_khoan:
+                for giao_dich in tai_khoan._giao_dich:
+                    if giao_dich._id == id_giao_dich:
+                        tai_khoan.xoa_giao_dich(giao_dich)
                 tai_khoan.cap_nhat_so_du()
                 return True
         return False
@@ -111,93 +113,173 @@ class QuanLyTaiChinh:
             bao_cao["chi_tiet_tai_khoan"].append(chi_tiet_tai_khoan)
         
         return bao_cao
-
-    def xuat_csv(self, duong_dan: str = "bao_cao_tai_chinh.csv"):
-        """
-        Xuat du lieu tai chinh ra file CSV
-        """
-        with open(duong_dan, 'w', newline='', encoding='utf-8') as file:
-            csv_writer = writer(file)
-            
-            # Header
-            csv_writer.writerow([
-                'Tai Khoan', 'So Du', 'Tong Thu', 'Tong Chi', 
-                'Danh Muc', 'So Tien', 'Ngay', 'Loai'
-            ])
-            
-            for tai_khoan in self._tai_khoan:
-                tong_thu = sum(gd.lay_so_tien() for gd in tai_khoan.lay_giao_dich() if gd.lay_loai() == "thu nhập")
-                tong_chi = sum(gd.lay_so_tien() for gd in tai_khoan.lay_giao_dich() if gd.lay_loai() == "chi tiêu")
-                
-                for giao_dich in tai_khoan.lay_giao_dich():
-                    csv_writer.writerow([
-                        tai_khoan._ten, 
-                        tai_khoan.lay_so_du(), 
-                        tong_thu, 
-                        tong_chi,
-                        giao_dich._danh_muc, 
-                        giao_dich.lay_so_tien(), 
-                        giao_dich._ngay, 
-                        giao_dich.lay_loai()
-                    ])
     
-    def doc_csv(self, duong_dan: str = "bao_cao_tai_chinh.csv"):
+    def xuat_csv(self):
         """
-        Đọc dữ liệu từ file CSV và nhập vào hệ thống quản lý tài chính
-
-        :param duong_dan: Đường dẫn tới file CSV cần đọc
-        :return: Danh sách các giao dịch đã đọc được
+        Xuất dữ liệu của các đối tượng ra các file CSV tương ứng
         """
-        giao_dich_moi = []
-        tai_khoan_dict = {}
+        # Xuất tài khoản
+        with open('taikhoan.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(['ID', 'Tên', 'Số Dư', 'Loại'])
+            for tai_khoan in self._tai_khoan:
+                writer.writerow([
+                    tai_khoan._id, 
+                    tai_khoan._ten, 
+                    tai_khoan.lay_so_du(), 
+                    tai_khoan._loai
+                ])
 
+        # Xuất giao dịch
+        with open('giaodich.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(['ID', 'ID Tài Khoản', 'Số Tiền', 'Loại', 'Danh Mục', 'Ngày', 'Ghi Chú'])
+            for tai_khoan in self._tai_khoan:
+                for giao_dich in tai_khoan.lay_giao_dich():
+                    writer.writerow([
+                        giao_dich._id,
+                        giao_dich._id_tai_khoan, 
+                        giao_dich.lay_so_tien(),
+                        giao_dich.lay_loai(),
+                        giao_dich._danh_muc,
+                        giao_dich._ngay,
+                        giao_dich._ghi_chu
+                    ])
+
+        # Xuất danh mục
+        with open('danhmuc.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(['ID', 'Tên', 'Loại', 'Mô Tả'])
+            for danh_muc in self._danh_muc:
+                writer.writerow([
+                    danh_muc._id, 
+                    danh_muc._ten, 
+                    danh_muc._loai, 
+                    danh_muc._mo_ta
+                ])
+
+        # Xuất phương pháp sáu lọ
+        if self._phuong_phap_sau_lo:
+            with open('phuongphapsaulo.csv', 'w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Lọ', 'Số Tiền'])
+                for ten_lo, so_tien in self._phuong_phap_sau_lo._lo.items():
+                    writer.writerow([ten_lo, so_tien])
+
+        # Xuất khoản vay
+        with open('khoanvay.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(['ID', 'Số Tiền', 'Người Cho Vay', 'Người Vay', 'Lãi Suất', 'Ngày Bắt Đầu', 'Ngày Đến Hạn', 'Trạng Thái'])
+            for khoan_vay in self._khoan_vay:
+                writer.writerow([
+                    khoan_vay._id,
+                    khoan_vay._so_tien, 
+                    khoan_vay._nguoi_cho_vay,
+                    khoan_vay._nguoi_vay,
+                    khoan_vay._lai_suat,
+                    khoan_vay._ngay_bat_dau,
+                    khoan_vay._ngay_den_han,
+                    khoan_vay._trang_thai
+                ])
+                
+    def nhap_csv(self):
+        """
+        Đọc dữ liệu từ các file CSV và nạp vào các danh sách đối tượng
+        """
+        # Nhập tài khoản
         try:
-            with open(duong_dan, 'r', newline='', encoding='utf-8') as file:
-                csv_reader = csv.DictReader(file)
-            
+            with open('taikhoan.csv', 'r', encoding='utf-8') as file:
+                csv_reader = csv.reader(file)
+                next(csv_reader)  # Bỏ qua dòng tiêu đề
                 for row in csv_reader:
-                    try:
-                        # Tạo tài khoản nếu chưa tồn tại
-                        ten_tai_khoan = row['Tai Khoan']
-                        if ten_tai_khoan not in tai_khoan_dict:
-                            tai_khoan_moi = TaiKhoan(
-                                id=f"TK_{len(tai_khoan_dict) + 1}", 
-                                ten=ten_tai_khoan, 
-                                so_du=float(row['So Du'])
-                            )
-                            self.them_tai_khoan(tai_khoan_moi)
-                            tai_khoan_dict[ten_tai_khoan] = tai_khoan_moi
-
-                        # Tạo giao dịch
-                        giao_dich = GiaoDich(
-                            id=f"GD_{len(giao_dich_moi) + 1}",
-                            id_tai_khoan=tai_khoan_dict[ten_tai_khoan]._id,
-                            so_tien=float(row['So Tien']),
-                            loai=row['Loai'].lower(),
-                            danh_muc=row['Danh Muc'],
-                            ngay=datetime.strptime(row['Ngay'], '%Y-%m-%d %H:%M:%S'),
-                            ghi_chu=""
-                        )
-
-                        # Thêm giao dịch vào hệ thống
-                        if self.them_giao_dich(giao_dich):
-                            giao_dich_moi.append(giao_dich)
-
-                    except (ValueError, KeyError) as e:
-                        print(f"Lỗi khi xử lý dòng: {row}. Chi tiết: {e}")
-                        continue
-
+                    tai_khoan = TaiKhoan(row[0], row[1], float(row[2]), row[3])
+                    self.them_tai_khoan(tai_khoan)
         except FileNotFoundError:
-            print(f"Không tìm thấy file: {duong_dan}")
-            return []
-        except PermissionError:
-            print(f"Không có quyền đọc file: {duong_dan}")
-            return []
+            print("Không tìm thấy file taikhoan.csv")
         except Exception as e:
-            print(f"Lỗi không xác định khi đọc file: {e}")
-            return []
+            print(f"Lỗi khi đọc file taikhoan.csv: {e}")
 
-        return giao_dich_moi
+        # Nhập danh mục
+        try:
+            with open('danhmuc.csv', 'r', encoding='utf-8') as file:
+                csv_reader = csv.reader(file)
+                next(csv_reader)  # Bỏ qua dòng tiêu đề
+                for row in csv_reader:
+                    danh_muc = DanhMuc(row[0], row[1], row[2], row[3])
+                    self.them_danh_muc(danh_muc)
+        except FileNotFoundError:
+            print("Không tìm thấy file danhmuc.csv")
+        except Exception as e:
+            print(f"Lỗi khi đọc file danhmuc.csv: {e}")
+
+        # Nhập khoản vay
+        try:
+            with open('khoanvay.csv', 'r', encoding='utf-8') as file:
+                csv_reader = csv.reader(file)
+                next(csv_reader)  # Bỏ qua dòng tiêu đề
+                for row in csv_reader:
+                    khoan_vay = KhoanVay(
+                        row[0],  # id
+                        float(row[1]),  # so_tien
+                        row[2],  # nguoi_cho_vay
+                        row[3],  # nguoi_vay
+                        float(row[4]),  # lai_suat
+                        datetime.strptime(row[5], '%Y-%m-%d %H:%M:%S'),  # ngay_bat_dau
+                        datetime.strptime(row[6], '%Y-%m-%d %H:%M:%S')  # ngay_den_han
+                    )
+                    khoan_vay._trang_thai = row[7]  # Trạng thái
+                    self.them_khoan_vay(khoan_vay)
+        except FileNotFoundError:
+            print("Không tìm thấy file khoanvay.csv")
+        except Exception as e:
+            print(f"Lỗi khi đọc file khoanvay.csv: {e}")
+
+        # Nhập giao dịch
+        try:
+            with open('giaodich.csv', 'r', encoding='utf-8') as file:
+                csv_reader = csv.reader(file)
+                next(csv_reader)  # Bỏ qua dòng tiêu đề
+                for row in csv_reader:
+                    giao_dich = GiaoDich(
+                        row[0],  # id
+                        row[1],  # id_tai_khoan
+                        float(row[2]),  # so_tien
+                        row[3],  # loai
+                        row[4],  # danh_muc
+                        datetime.strptime(row[5], '%Y-%m-%d %H:%M:%S'),  # ngay
+                        row[6]  # ghi_chu
+                    )
+                    self.them_giao_dich(giao_dich)
+        except FileNotFoundError:
+            print("Không tìm thấy file giaodich.csv")
+        except Exception as e:
+            print(f"Lỗi khi đọc file giaodich.csv: {e}")
+
+        # Nhập phương pháp sáu lọ
+        try:
+            with open('phuongphapsaulo.csv', 'r', encoding='utf-8') as file:
+                csv_reader = csv.reader(file)
+                next(csv_reader)  # Bỏ qua dòng tiêu đề
+            
+                # Tính tổng thu nhập để khởi tạo phương pháp sáu lọ
+                tong_thu_nhap = 0
+                for row in csv_reader:
+                    tong_thu_nhap += float(row[1])
+            
+                # Reset về đầu file để đọc lại
+                file.seek(0)
+                next(csv_reader)
+            
+                # Thiết lập phương pháp sáu lọ
+                self.thiet_lap_phuong_phap_sau_lo(tong_thu_nhap)
+            
+                # Cập nhật số tiền cho từng lọ
+                for row in csv_reader:
+                    self._phuong_phap_sau_lo.cap_nhat_so_tien_lo(row[0], float(row[1]))
+        except FileNotFoundError:
+            print("Không tìm thấy file phuongphapsaulo.csv")
+        except Exception as e:
+            print(f"Lỗi khi đọc file phuongphapsaulo.csv: {e}")
 
     def dat_muc_tieu_tiet_kiem(self, id_tai_khoan: str, so_tien: float):
         """

@@ -29,3 +29,9 @@ class GiaoDich:
     def cap_nhat_chi_tiet(self, so_tien: float, loai: str):
         self._so_tien = so_tien
         self._loai = loai
+       
+        
+        
+    
+    
+    

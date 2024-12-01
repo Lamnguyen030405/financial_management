@@ -38,3 +38,6 @@ class TaiKhoan:
     
     def lay_giao_dich(self) -> List[GiaoDich]:
         return self._giao_dich
+    
+    
+    
