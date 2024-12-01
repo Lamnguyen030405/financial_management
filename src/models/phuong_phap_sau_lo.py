@@ -17,16 +17,19 @@ class PhuongPhapSauLo:
         self._lo["giai_tri"] = self._tong_thu_nhap * 0.10
         self._lo["tu_do_tai_chinh"] = self._tong_thu_nhap * 0.10
         self._lo["cho_di"] = self._tong_thu_nhap * 0.05
+       
     def cap_nhat_so_tien_lo(self, ten_lo: str, so_tien: float):
         if ten_lo in self._lo:
             self._lo[ten_lo] += so_tien
         else:
             raise ValueError(f"Lọ '{ten_lo}' không tồn tại.")
+        
     def lay_so_du_lo(self, ten_lo: str) -> float:
          if ten_lo in self._lo:
             return self._lo[ten_lo]
-        else:
+         else:
             raise ValueError(f"Lọ '{ten_lo}' không tồn tại.")
+         
     def chuyen_tien_giua_cac_lo(self, tu_lo: str, den_lo: str, so_tien: float):
         if tu_lo not in self._lo:
             raise ValueError(f"Lọ nguồn '{tu_lo}' không tồn tại.")

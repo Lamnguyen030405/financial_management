@@ -44,6 +44,17 @@ class QuanLyTaiChinh:
                 tai_khoan.cap_nhat_so_du()
                 return True
         return False
+    
+    def xoa_giao_dich(self, giao_dich: GiaoDich):
+        """
+        Xoa giao dich o mot tai khoan
+        """
+        for tai_khoan in self._tai_khoan:
+            if tai_khoan._id == giao_dich._id_tai_khoan:
+                tai_khoan.xoa_giao_dich(giao_dich)
+                tai_khoan.cap_nhat_so_du()
+                return True
+        return False
 
     def them_khoan_vay(self, khoan_vay: KhoanVay):
         """
