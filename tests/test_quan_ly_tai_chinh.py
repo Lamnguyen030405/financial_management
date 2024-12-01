@@ -13,10 +13,10 @@ def hien_thi_menu():
     print("1. Thêm tài khoản")
     print("2. Xóa tài khoản")
     print("3. Thêm giao dịch")
-    print("4. Thêm khoản vay")
-    print("5. Tạo báo cáo tài chính")
-    print("6. Đặt mục tiêu tiết kiệm")
-    print("7. Dự báo xu hướng tài chính")
+    print("4. Xóa giao dịch")
+    print("5. Xuất csv")
+    print("6. Nhập csv")
+    print("7. Tạo báo cáo tài chính")
     print("8. Thoát")
 
 def chon_menu():
@@ -109,7 +109,9 @@ def main():
             quan_ly.xuat_csv()
         elif lua_chon == 6:
             quan_ly.nhap_csv()
-        elif lua_chon == 7:    
+        elif lua_chon == 7:
+            tao_bao_cao()
+        elif lua_chon == 8:    
             print("Thoát chương trình!")
             break
         else:
