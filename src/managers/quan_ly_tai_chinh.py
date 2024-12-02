@@ -68,51 +68,28 @@ class QuanLyTaiChinh:
                 return False
         self._khoan_vay.append(khoan_vay)
         return True
-
-    def tao_bao_cao_tai_chinh(self, ngay_bat_dau: datetime, ngay_ket_thuc: datetime) -> dict:
+    
+    def xoa_khoan_vay(self, id_khoan_vay: str):
         """
-        Tao bao cao tai chinh trong khoang thoi gian
+        Xoa mot khoan vay
         """
-        bao_cao = {
-            "tong_so_du": sum(tk.lay_so_du() for tk in self._tai_khoan),
-            "tong_no": sum(kv.lay_so_tien_con_lai() for kv in self._khoan_vay),
-            "giao_dich_theo_danh_muc": {},
-            "chi_tiet_tai_khoan": []
-        }
+        self._khoan_vay = [kv for kv in self._khoan_vay if kv._id != id_khoan_vay]
         
-        # Chi tiet giao dich theo danh muc trong khoang thoi gian
-        for tai_khoan in self._tai_khoan:
-            chi_tiet_tai_khoan = {
-                "id": tai_khoan._id,
-                "ten": tai_khoan._ten,
-                "so_du": tai_khoan.lay_so_du(),
-                "giao_dich": []
-            }
-            
-            for giao_dich in tai_khoan.lay_giao_dich():
-                if ngay_bat_dau <= giao_dich._ngay <= ngay_ket_thuc:
-                    chi_tiet_tai_khoan["giao_dich"].append({
-                        "so_tien": giao_dich.lay_so_tien(),
-                        "loai": giao_dich.lay_loai(),
-                        "ngay": giao_dich._ngay,
-                        "danh_muc": giao_dich._danh_muc
-                    })
-                    
-                    # Thong ke giao dich theo danh muc
-                    if giao_dich._danh_muc not in bao_cao["giao_dich_theo_danh_muc"]:
-                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc] = {
-                            "tong_thu": 0,
-                            "tong_chi": 0
-                        }
-                    
-                    if giao_dich.lay_loai() == "thu nhập":
-                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_thu"] += giao_dich.lay_so_tien()
-                    elif giao_dich.lay_loai() == "chi tiêu":
-                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_chi"] += giao_dich.lay_so_tien()
-            
-            bao_cao["chi_tiet_tai_khoan"].append(chi_tiet_tai_khoan)
-        
-        return bao_cao
+    def them_danh_muc(self, danh_muc: DanhMuc):
+        """
+        Them mot danh muc moi vao he thong
+        """
+        for dm in self._danh_muc:
+            if dm._id == danh_muc._id:
+                return False
+        self._danh_muc.append(danh_muc)
+        return True
+    
+    def xoa_danh_muc(self, id_danh_muc: str):
+        """
+        Xoa mot danh muc
+        """
+        self._danh_muc = [dm for dm in self._danh_muc if dm._id != id_danh_muc]
     
     def xuat_csv(self):
         """
@@ -280,6 +257,66 @@ class QuanLyTaiChinh:
             print("Không tìm thấy file phuongphapsaulo.csv")
         except Exception as e:
             print(f"Lỗi khi đọc file phuongphapsaulo.csv: {e}")
+    
+    def tinh_tong_thu_nhap(self) -> float:
+        """
+        Tính tổng thu nhập từ tất cả các tài khoản
+    
+        :return: Tổng số tiền thu nhập
+        """
+        tong_thu_nhap = 0
+    
+        for tai_khoan in self._tai_khoan:
+            # Chỉ tính thu nhập cho các tài khoản có số dư dương
+            if tai_khoan.lay_so_du() > 0:
+                tong_thu_nhap += tai_khoan.lay_so_du()
+    
+        return tong_thu_nhap
+            
+    def tao_bao_cao_tai_chinh(self, ngay_bat_dau: datetime, ngay_ket_thuc: datetime) -> dict:
+        """
+        Tao bao cao tai chinh trong khoang thoi gian
+        """
+        bao_cao = {
+            "tong_so_du": sum(tk.lay_so_du() for tk in self._tai_khoan),
+            "tong_no": sum(kv.lay_so_tien_con_lai() for kv in self._khoan_vay),
+            "giao_dich_theo_danh_muc": {},
+            "chi_tiet_tai_khoan": []
+        }
+        
+        # Chi tiet giao dich theo danh muc trong khoang thoi gian
+        for tai_khoan in self._tai_khoan:
+            chi_tiet_tai_khoan = {
+                "id": tai_khoan._id,
+                "ten": tai_khoan._ten,
+                "so_du": tai_khoan.lay_so_du(),
+                "giao_dich": []
+            }
+            
+            for giao_dich in tai_khoan.lay_giao_dich():
+                if ngay_bat_dau <= giao_dich._ngay <= ngay_ket_thuc:
+                    chi_tiet_tai_khoan["giao_dich"].append({
+                        "so_tien": giao_dich.lay_so_tien(),
+                        "loai": giao_dich.lay_loai(),
+                        "ngay": giao_dich._ngay,
+                        "danh_muc": giao_dich._danh_muc
+                    })
+                    
+                    # Thong ke giao dich theo danh muc
+                    if giao_dich._danh_muc not in bao_cao["giao_dich_theo_danh_muc"]:
+                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc] = {
+                            "tong_thu": 0,
+                            "tong_chi": 0
+                        }
+                    
+                    if giao_dich.lay_loai() == "thu nhập":
+                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_thu"] += giao_dich.lay_so_tien()
+                    elif giao_dich.lay_loai() == "chi tiêu":
+                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_chi"] += giao_dich.lay_so_tien()
+            
+            bao_cao["chi_tiet_tai_khoan"].append(chi_tiet_tai_khoan)
+        
+        return bao_cao
 
     def dat_muc_tieu_tiet_kiem(self, id_tai_khoan: str, so_tien: float):
         """
@@ -291,7 +328,7 @@ class QuanLyTaiChinh:
                 return True
         return False
 
-    def du_bao_xu_huong_tai_chinh(self) -> dict:
+    def du_bao_xu_huong_tai_chinh(self) -> dict:    
         """
         Du bao xu huong tai chinh dua tren du lieu lich su
         """
@@ -341,15 +378,6 @@ class QuanLyTaiChinh:
         """
         self._phuong_phap_sau_lo = PhuongPhapSauLo(tong_thu_nhap)
         self._phuong_phap_sau_lo.phan_bo_thu_nhap()
-
-    def them_danh_muc(self, danh_muc: DanhMuc):
-        """
-        Them mot danh muc moi vao he thong
-        """
-        if not any(dm._id == danh_muc._id for dm in self._danh_muc):
-            self._danh_muc.append(danh_muc)
-            return True
-        return False
 
     def lay_thong_ke_tong_quat(self) -> dict:
         """
