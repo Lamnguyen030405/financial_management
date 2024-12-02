@@ -67,7 +67,7 @@ def them_giao_dich():
     id = input("Nhập ID giao dịch: ")
     id_tai_khoan = input("Nhập ID tài khoản: ")
     so_tien = float(input("Nhập số tiền: "))
-    loai = input("Nhập loại giao dịch (thu nhập/chi tiêu): ")
+    loai = input("Nhập loại giao dịch (Thu nhập/Chi tiêu): ")
     ngay = datetime.strptime(input("Nhập ngày (YYYY-MM-DD): "), "%Y-%m-%d")
     danh_muc = input("Nhập danh mục: ")
     ghi_chu = input("Nhập ghi chú: ")
@@ -85,7 +85,6 @@ def them_khoan_vay():
     lai_suat = float(input("Nhập lãi suất (%): "))
     ngay_bat_dau = datetime.strptime(input("Nhập ngày bắt đầu (YYYY-MM-DD): "), "%Y-%m-%d")
     ngay_den_han = datetime.strptime(input("Nhập ngày đến hạn (YYYY-MM-DD): "), "%Y-%m-%d")
-    
     khoan_vay = KhoanVay(
         id_khoan_vay, 
         so_tien, 
@@ -93,7 +92,7 @@ def them_khoan_vay():
         nguoi_vay, 
         lai_suat, 
         ngay_bat_dau, 
-        ngay_den_han
+        ngay_den_han,
     )
     if quan_ly.them_khoan_vay(khoan_vay):
         print("Thêm khoản vay thành công!")

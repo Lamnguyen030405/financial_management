@@ -12,9 +12,9 @@ class TaiKhoan:
     
     def them_giao_dich(self, giao_dich: GiaoDich):
         # Chú ý: sử dụng method thay vì gọi trực tiếp thuộc tính
-        if giao_dich.lay_loai() == "thu nhập":
+        if giao_dich.lay_loai() == "Thu nhập":
             self._so_du += giao_dich.lay_so_tien()
-        elif giao_dich.lay_loai() == "chi tiêu":
+        elif giao_dich.lay_loai() == "Chi tiêu":
             self._so_du -= giao_dich.lay_so_tien()
         self._giao_dich.append(giao_dich)
         
@@ -28,9 +28,9 @@ class TaiKhoan:
     def cap_nhat_so_du(self):
         self._so_du = 0
         for giao_dich in self._giao_dich:
-            if giao_dich.lay_loai() == "thu nhập":
+            if giao_dich.lay_loai() == "Thu nhập":
                 self._so_du += giao_dich.lay_so_tien()
-            elif giao_dich.lay_loai() == "chi tiêu":
+            elif giao_dich.lay_loai() == "Chi tiêu":
                 self._so_du -= giao_dich.lay_so_tien()
                 
     def lay_so_du(self) -> float:
