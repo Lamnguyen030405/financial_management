@@ -119,7 +119,7 @@ class QuanLyTaiChinh:
                         giao_dich.lay_so_tien(),
                         giao_dich.lay_loai(),
                         giao_dich._danh_muc,
-                        giao_dich._ngay,
+                        giao_dich._ngay.strftime('%Y-%m-%d %H:%M:%S'),  # Chuyển đổi datetime thành chuỗi
                         giao_dich._ghi_chu
                     ])
 
@@ -154,15 +154,21 @@ class QuanLyTaiChinh:
                     khoan_vay._nguoi_cho_vay,
                     khoan_vay._nguoi_vay,
                     khoan_vay._lai_suat,
-                    khoan_vay._ngay_bat_dau,
-                    khoan_vay._ngay_den_han,
+                    khoan_vay._ngay_bat_dau.strftime('%Y-%m-%d %H:%M:%S'),  # Chuyển đổi datetime thành chuỗi
+                    khoan_vay._ngay_den_han.strftime('%Y-%m-%d %H:%M:%S'),  # Chuyển đổi datetime thành chuỗi
                     khoan_vay._trang_thai
                 ])
-                
+
     def nhap_csv(self):
         """
         Đọc dữ liệu từ các file CSV và nạp vào các danh sách đối tượng
         """
+        # Xóa sạch dữ liệu hiện tại trước khi nhập
+        self._tai_khoan.clear()
+        self._danh_muc.clear()
+        self._khoan_vay.clear()
+        self._phuong_phap_sau_lo = None
+    
         # Nhập tài khoản
         try:
             with open('taikhoan.csv', 'r', encoding='utf-8') as file:
@@ -237,19 +243,17 @@ class QuanLyTaiChinh:
             with open('phuongphapsaulo.csv', 'r', encoding='utf-8') as file:
                 csv_reader = csv.reader(file)
                 next(csv_reader)  # Bỏ qua dòng tiêu đề
-            
+        
                 # Tính tổng thu nhập để khởi tạo phương pháp sáu lọ
-                tong_thu_nhap = 0
-                for row in csv_reader:
-                    tong_thu_nhap += float(row[1])
-            
+                tong_thu_nhap = sum(float(row[1]) for row in csv_reader)
+        
                 # Reset về đầu file để đọc lại
                 file.seek(0)
                 next(csv_reader)
-            
+        
                 # Thiết lập phương pháp sáu lọ
                 self.thiet_lap_phuong_phap_sau_lo(tong_thu_nhap)
-            
+        
                 # Cập nhật số tiền cho từng lọ
                 for row in csv_reader:
                     self._phuong_phap_sau_lo.cap_nhat_so_tien_lo(row[0], float(row[1]))

@@ -33,7 +33,6 @@ def hien_thi_menu():
     print("   62. Xem phân bổ sáu lọ")
     print("7. Quản lý Dữ Liệu")
     print("   71. Xuất dữ liệu CSV")
-    print("   72. Nhập dữ liệu CSV")
     print("8. Thoát")
 
 def chon_menu():
@@ -213,9 +212,6 @@ def main():
         elif lua_chon == 71:
             quan_ly.xuat_csv()
             print("Xuất dữ liệu CSV thành công!")
-        elif lua_chon == 72:
-            quan_ly.nhap_csv()
-            print("Nhập dữ liệu CSV thành công!")
         
         # Thoát
         elif lua_chon == 8:    

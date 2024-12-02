@@ -1,2 +1,20 @@
 ID,Tên,Loại,Mô Tả
 DM001,Ăn uống,Chi tiêu,Các khoản chi tiêu ăn uống
+DM002,Giải trí,Chi tiêu,Các khoản chi tiêu cho vui chơi giải trí
+DM003,Tiết kiệm,Tiền gửi,Các khoản tiền gửi tiết kiệm hàng tháng
+DM004,Mua sắm,Chi tiêu,Các khoản chi tiêu cho mua sắm hàng hóa
+DM005,Du lịch,Chi tiêu,Các khoản chi tiêu cho các chuyến đi du lịch
+DM006,Giáo dục,Đầu tư,Các khoản chi cho học hành
+DM007,Sức khỏe,Chi tiêu,Các khoản chi tiêu liên quan đến y tế
+DM008,Xe cộ,Chi tiêu,Các khoản chi cho việc bảo dưỡng và sử dụng xe cộ
+DM009,Tiền nhà,Chi tiêu,Các khoản chi cho tiền thuê nhà hoặc vay thế chấp
+DM010,Quà tặng,Chi tiêu,Các khoản chi tiêu mua quà tặng người thân
+TN001,Lương,Thu nhập,Thu nhập từ công việc chính hoặc lương hàng tháng
+TN002,Thưởng,Thu nhập,Tiền thưởng từ công việc hoặc thành tích
+TN003,Kinh doanh,Thu nhập,Thu nhập từ hoạt động kinh doanh cá nhân hoặc công ty
+TN004,Đầu tư,Thu nhập,Lợi nhuận từ đầu tư chứng khoán
+TN005,Lãi suất,Thu nhập,Thu nhập từ lãi suất tiền gửi ngân hàng hoặc trái phiếu
+TN006,Cho thuê,Thu nhập,Thu nhập từ việc cho thuê tài sản như nhà
+TN007,Quà tặng,Thu nhập,Thu nhập từ quà tặng
+TN008,Trúng thưởng,Thu nhập,Thu nhập từ các giải thưởng hoặc chương trình may mắn
+TN009,Khác,Thu nhập,Các khoản thu nhập không thuộc các loại trên

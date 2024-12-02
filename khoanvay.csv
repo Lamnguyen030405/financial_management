@@ -1,1 +1,11 @@
 ID,Số Tiền,Người Cho Vay,Người Vay,Lãi Suất,Ngày Bắt Đầu,Ngày Đến Hạn,Trạng Thái
+CV001,5000000,Nguyễn Văn A,Trần Thị B,5%,2023-01-01,2023-12-31,Đang hoạt động
+CV002,10000000,Trần Thị C,Nguyễn Văn D,7%,2023-03-15,2024-03-15,Đang hoạt động
+CV003,2000000,Nguyễn Văn E,Phạm Thị F,6%,2023-06-01,2023-12-01,Hoàn thành
+CV004,15000000,Phạm Thị G,Nguyễn Văn H,8%,2023-02-01,2024-02-01,Trễ hạn
+CV005,3000000,Nguyễn Văn I,Trần Thị J,4.5%,2023-07-01,2024-01-01,Đang hoạt động
+CV006,7000000,Nguyễn Văn K,Nguyễn Thị L,5.5%,2023-05-01,2024-05-01,Đang hoạt động
+CV007,1000000,Trần Thị M,Phạm Văn N,6%,2023-04-01,2023-10-01,Hoàn thành
+CV008,2500000,Nguyễn Văn O,Trần Thị P,5%,2023-08-15,2024-02-15,Đang hoạt động
+CV009,12000000,Nguyễn Thị Q,Nguyễn Văn R,7%,2023-09-01,2024-09-01,Đang hoạt động
+CV010,500000,Nguyễn Văn S,Trần Thị T,3.5%,2023-10-01,2024-04-01,Đang hoạt động

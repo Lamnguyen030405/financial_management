@@ -1,2 +1,16 @@
 ID,ID Tài Khoản,Số Tiền,Loại,Danh Mục,Ngày,Ghi Chú
-GD001,TK001,1000,chi tiêu,Ăn uống,2024-12-02 19:00:22.132694,Ăn trưa
+GD001,TK001,-200.0,Chi tiêu,Ăn uống,2023-12-01,Bữa sáng với bạn bè
+GD002,TK002,5000.0,Thu nhập,Lương,2023-12-01,Lương tháng 12
+GD003,TK003,1000.0,Chi tiêu,Giải trí,2023-12-01,Xem phim
+GD004,TK004,-500.0,Chi tiêu,Mua sắm,2023-12-02,Mua quần áo mới
+GD005,TK005,-300.0,Chi tiêu,Sức khỏe,2023-12-02,Thuốc cảm
+GD006,TK006,20000.0,Thu nhập,Kinh doanh,2023-12-03,Doanh thu bán hàng
+GD007,TK007,-1000.0,Chi tiêu,Giáo dục,2023-12-03,Học phí khóa học
+GD008,TK008,-700.0,Chi tiêu,Du lịch,2023-12-04,Vé máy bay nội địa
+GD009,TK009,1500.0,Thu nhập,Thưởng,2023-12-05,Thưởng hoàn thành dự án
+GD010,TK010,-200.0,Chi tiêu,Quà tặng,2023-12-05,Mua quà sinh nhật
+GD011,TK003,-1000.0,Chi tiêu,Xe cộ,2023-12-06,Bảo dưỡng xe
+GD012,TK002,300.0,Thu nhập,Lãi suất,2023-12-07,Lãi tiền gửi ngân hàng
+GD013,TK005,-500.0,Chi tiêu,Giải trí,2023-12-07,Thẻ game online
+GD014,TK004,-700.0,Chi tiêu,Ăn uống,2023-12-08,Bữa tối với gia đình
+GD015,TK001,2000.0,Thu nhập,Khác,2023-12-08,Hoàn tiền từ bạn bè

@@ -1,2 +1,11 @@
 ID,Tên,Số Dư,Loại
-TK001,Tài khoản test,-1000,Chi tiêu
+TK001,Tài khoản test,-1000.0,Chi tiêu
+TK002,Tài khoản chính,50000.0,Thu nhập
+TK003,Tài khoản tiết kiệm,200000.0,Tiết kiệm
+TK004,Tài khoản mua sắm,-5000.0,Chi tiêu
+TK005,Tài khoản giải trí,1000.0,Chi tiêu
+TK006,Tài khoản đầu tư,150000.0,Đầu tư
+TK007,Tài khoản dự phòng,30000.0,Tiết kiệm
+TK008,Tài khoản du lịch,7000.0,Chi tiêu
+TK009,Tài khoản giáo dục,20000.0,Chi tiêu
+TK010,Tài khoản thưởng,25000.0,Thu nhập
