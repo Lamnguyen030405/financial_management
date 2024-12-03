@@ -46,6 +46,7 @@ class QuanLyTaiChinh:
                 tai_khoan.them_giao_dich(giao_dich)
                 tai_khoan.cap_nhat_so_du()
                 self.xuat_giao_dich_csv()
+                self.xuat_tai_khoan_csv()
                 return True
         return False
     
@@ -60,6 +61,7 @@ class QuanLyTaiChinh:
                         tai_khoan.xoa_giao_dich(giao_dich)
                 tai_khoan.cap_nhat_so_du()
                 self.xuat_giao_dich_csv()
+                self.xuat_tai_khoan_csv()
                 return True
         return False
     
@@ -74,6 +76,7 @@ class QuanLyTaiChinh:
                         giao_dich.cap_nhat_chi_tiet(so_tien, loai)
                 tai_khoan.cap_nhat_so_du()
                 self.xuat_giao_dich_csv()
+                self.xuat_tai_khoan_csv()
                 return True
         return False
 

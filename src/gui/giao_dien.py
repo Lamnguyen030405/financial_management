@@ -907,8 +907,7 @@ class QuanLyTaiChinhGUI:
             messagebox.showerror("Lỗi", "Định dạng ngày không hợp lệ!")
         except Exception as e:
             messagebox.showerror("Lỗi", f"Lỗi khi tạo báo cáo: {e}")
-
-            
+   
     def du_bao_xu_huong(self):
         """Dự báo xu hướng tài chính và hiển thị kết quả trên GUI"""
         # Lấy dữ liệu dự báo
