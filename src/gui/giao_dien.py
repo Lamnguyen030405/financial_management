@@ -6,6 +6,10 @@ from datetime import datetime
 import csv
 
 from src.managers.quan_ly_tai_chinh import QuanLyTaiChinh
+from src.models.tai_khoan import TaiKhoan
+from src.models.khoan_vay import KhoanVay
+from src.models.giao_dich import GiaoDich
+from src.models.danh_muc import DanhMuc
 
 class QuanLyTaiChinhGUI:
     def __init__(self):
@@ -1167,7 +1171,6 @@ class QuanLyTaiChinhGUI:
 
         submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_chuyen_tien)
         submit_button.pack(pady=20)
-
 
     def run(self):
         """Chạy ứng dụng giao diện"""
