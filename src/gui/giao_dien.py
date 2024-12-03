@@ -828,8 +828,9 @@ class QuanLyTaiChinhGUI:
         submit_button.pack(pady=20)
 
     def tao_bao_cao(self):
-        """Tạo báo cáo tài chính"""
+        """Tạo báo cáo tài chính và hiển thị trên GUI"""
         try:
+            # Yêu cầu người dùng nhập ngày bắt đầu và ngày kết thúc
             ngay_bat_dau = datetime.strptime(
                 simpledialog.askstring("Báo Cáo", "Nhập ngày bắt đầu (YYYY-MM-DD):"), 
                 "%Y-%m-%d"
@@ -838,11 +839,75 @@ class QuanLyTaiChinhGUI:
                 simpledialog.askstring("Báo Cáo", "Nhập ngày kết thúc (YYYY-MM-DD):"), 
                 "%Y-%m-%d"
             )
-            
+        
+            # Lấy dữ liệu báo cáo từ hàm tao_bao_cao_tai_chinh
             bao_cao = self.quan_ly.tao_bao_cao_tai_chinh(ngay_bat_dau, ngay_ket_thuc)
-            messagebox.showinfo("Báo Cáo Tài Chính", str(bao_cao))
+        
+            # Xóa các widget cũ trong content frame
+            for widget in self.content_frame.winfo_children():
+                widget.destroy()
+
+            # Tạo tiêu đề
+            title_label = ctk.CTkLabel(
+                self.content_frame, 
+                text="Báo Cáo Tài Chính", 
+                font=("Helvetica", 20, "bold")
+            )
+            title_label.pack(pady=20)
+
+            # Tổng số dư và tổng nợ
+            summary_frame = ctk.CTkFrame(self.content_frame)
+            summary_frame.pack(pady=10, padx=20, fill="x")
+
+            tong_so_du_label = ctk.CTkLabel(
+                summary_frame, 
+                text=f"Tổng Số Dư: {bao_cao['tong_so_du']}", 
+                font=("Helvetica", 14, "bold")
+            )
+            tong_so_du_label.pack(side="left", padx=10)
+
+            tong_no_label = ctk.CTkLabel(
+                summary_frame, 
+                text=f"Tổng Nợ: {bao_cao['tong_no']}", 
+                font=("Helvetica", 14, "bold")
+            )
+            tong_no_label.pack(side="right", padx=10)
+
+            # Bảng chi tiết tài khoản
+            tk_details_frame = ctk.CTkFrame(self.content_frame)
+            tk_details_frame.pack(pady=10, padx=20, fill="both", expand=True)
+
+            tk_columns = ("ID", "Tên", "Số Dư")
+            tk_table = ttk.Treeview(tk_details_frame, columns=tk_columns, show='headings')
+            tk_table.pack(fill="both", expand=True)
+
+            for col in tk_columns:
+                tk_table.heading(col, text=col)
+                tk_table.column(col, width=100)
+
+            for chi_tiet in bao_cao["chi_tiet_tai_khoan"]:
+                tk_table.insert("", "end", values=(chi_tiet["id"], chi_tiet["ten"], chi_tiet["so_du"]))
+
+            # Bảng giao dịch theo danh mục
+            gd_details_frame = ctk.CTkFrame(self.content_frame)
+            gd_details_frame.pack(pady=10, padx=20, fill="both", expand=True)
+
+            gd_columns = ("Danh Mục", "Tổng Thu", "Tổng Chi")
+            gd_table = ttk.Treeview(gd_details_frame, columns=gd_columns, show='headings')
+            gd_table.pack(fill="both", expand=True)
+
+            for col in gd_columns:
+                gd_table.heading(col, text=col)
+                gd_table.column(col, width=100)
+
+            for danh_muc, values in bao_cao["giao_dich_theo_danh_muc"].items():
+                gd_table.insert("", "end", values=(danh_muc, values["tong_thu"], values["tong_chi"]))
+    
         except ValueError:
             messagebox.showerror("Lỗi", "Định dạng ngày không hợp lệ!")
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Lỗi khi tạo báo cáo: {e}")
+
             
     def du_bao_xu_huong(self):
         """Dự báo xu hướng tài chính và hiển thị kết quả trên GUI"""

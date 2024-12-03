@@ -428,7 +428,7 @@ class QuanLyTaiChinh:
                     if giao_dich.lay_loai() == "thu nhập":
                         bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_thu"] += giao_dich.lay_so_tien()
                     elif giao_dich.lay_loai() == "chi tiêu":
-                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_chi"] += giao_dich.lay_so_tien()
+                        bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_chi"] -= giao_dich.lay_so_tien()
             
             bao_cao["chi_tiet_tai_khoan"].append(chi_tiet_tai_khoan)
         
