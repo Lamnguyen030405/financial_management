@@ -58,6 +58,19 @@ class QuanLyTaiChinh:
                 tai_khoan.cap_nhat_so_du()
                 return True
         return False
+    
+    def cap_nhat_giao_dich(self, id_tai_khoan: str, id_giao_dich: str, so_tien: float, loai: str):
+        """
+        Cap nhat giao dich o mot tai khoan
+        """
+        for tai_khoan in self._tai_khoan:
+            if tai_khoan._id == id_tai_khoan:
+                for giao_dich in tai_khoan._giao_dich:
+                    if giao_dich._id == id_giao_dich:
+                        giao_dich.cap_nhat_chi_tiet(so_tien, loai)
+                tai_khoan.cap_nhat_so_du()   
+                return True
+        return False
 
     def them_khoan_vay(self, khoan_vay: KhoanVay):
         """
@@ -74,7 +87,14 @@ class QuanLyTaiChinh:
         Xoa mot khoan vay
         """
         self._khoan_vay = [kv for kv in self._khoan_vay if kv._id != id_khoan_vay]
-        
+    
+    def them_thanh_toan(self, id_khoan_vay: str, so_tien: float, ngay: datetime):
+        for kv in self._khoan_vay:
+            if kv._id == id_khoan_vay:
+                kv.them_thanh_toan(so_tien, ngay)
+                return True
+        return False
+    
     def them_danh_muc(self, danh_muc: DanhMuc):
         """
         Them mot danh muc moi vao he thong
@@ -90,6 +110,14 @@ class QuanLyTaiChinh:
         Xoa mot danh muc
         """
         self._danh_muc = [dm for dm in self._danh_muc if dm._id != id_danh_muc]
+        
+    def cap_nhat_danh_muc(self, id_danh_muc: str, ten: str, loai: str):
+        """
+        Cap nhat mot danh muc
+        """
+        for dm in self._danh_muc: 
+            if dm._id == id_danh_muc:
+                dm.cap_nhat_danh_muc(ten, loai)
     
     def xuat_csv(self):
         """
@@ -146,7 +174,7 @@ class QuanLyTaiChinh:
         # Xuất khoản vay
         with open('khoanvay.csv', 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
-            writer.writerow(['ID', 'Số Tiền', 'Người Cho Vay', 'Người Vay', 'Lãi Suất', 'Ngày Bắt Đầu', 'Ngày Đến Hạn', 'Trạng Thái'])
+            writer.writerow(['ID', 'Số Tiền', 'Người Cho Vay', 'Người Vay', 'Lãi Suất', 'Ngày Bắt Đầu', 'Ngày Đến Hạn', 'Trạng Thái', 'Số Tiền Còn Lại'])
             for khoan_vay in self._khoan_vay:
                 writer.writerow([
                     khoan_vay._id,
@@ -156,8 +184,32 @@ class QuanLyTaiChinh:
                     khoan_vay._lai_suat,
                     khoan_vay._ngay_bat_dau.strftime('%Y-%m-%d %H:%M:%S'),  # Chuyển đổi datetime thành chuỗi
                     khoan_vay._ngay_den_han.strftime('%Y-%m-%d %H:%M:%S'),  # Chuyển đổi datetime thành chuỗi
-                    khoan_vay._trang_thai
+                    khoan_vay._trang_thai,
+                    khoan_vay.lay_so_tien_con_lai()  # Thêm số tiền còn lại
                 ])
+
+        # Xuất mục tiêu tiết kiệm
+        with open('muctieutietkiem.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(['ID Tài Khoản', 'Số Tiền Mục Tiêu'])
+            for id_tai_khoan, so_tien in self._muc_tieu_tiet_kiem.items():
+                writer.writerow([id_tai_khoan, so_tien])
+
+        # Xuất lịch sử thanh toán
+        with open('lichsuthanhtoan.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            # Ghi dòng tiêu đề
+            writer.writerow(['ID Khoản Vay', 'Số Tiền', 'Ngày Thanh Toán'])
+
+            # Lặp qua tất cả các khoản vay để lấy lịch sử thanh toán
+            for khoan_vay in self._khoan_vay:
+                lich_su = khoan_vay.lay_lich_su_thanh_toan()
+                for thanh_toan in lich_su:
+                    writer.writerow([
+                        khoan_vay._id, 
+                        thanh_toan['so_tien'], 
+                        thanh_toan['ngay'].strftime('%Y-%m-%d')
+                    ])
 
     def nhap_csv(self):
         """
@@ -168,7 +220,8 @@ class QuanLyTaiChinh:
         self._danh_muc.clear()
         self._khoan_vay.clear()
         self._phuong_phap_sau_lo = None
-    
+        self._muc_tieu_tiet_kiem.clear()  # Clear the saving goals as well
+
         # Nhập tài khoản
         try:
             with open('taikhoan.csv', 'r', encoding='utf-8') as file:
@@ -211,11 +264,30 @@ class QuanLyTaiChinh:
                         datetime.strptime(row[6], '%Y-%m-%d %H:%M:%S')  # ngay_den_han
                     )
                     khoan_vay._trang_thai = row[7]  # Trạng thái
+                    khoan_vay._so_tien_con_lai = float(row[8])  # Số tiền còn lại
                     self.them_khoan_vay(khoan_vay)
         except FileNotFoundError:
             print("Không tìm thấy file khoanvay.csv")
         except Exception as e:
             print(f"Lỗi khi đọc file khoanvay.csv: {e}")
+
+        # Nhập lịch sử thanh toán
+        try:
+            with open('lichsuthanhtoan.csv', 'r', encoding='utf-8') as file:
+                csv_reader = csv.reader(file)
+                next(csv_reader)  # Bỏ qua dòng tiêu đề
+                for row in csv_reader:
+                    for khoan_vay in self._khoan_vay:
+                        if khoan_vay._id == row[0]:
+                            thanh_toan = {
+                                "so_tien": float(row[1]),
+                                "ngay": datetime.strptime(row[2], '%Y-%m-%d')
+                            }
+                            khoan_vay._lich_su_thanh_toan.append(thanh_toan)
+        except FileNotFoundError:
+            print("Không tìm thấy file lichsuthanhtoan.csv")
+        except Exception as e:
+            print(f"Lỗi khi đọc file lichsuthanhtoan.csv: {e}")
 
         # Nhập giao dịch
         try:
@@ -243,17 +315,17 @@ class QuanLyTaiChinh:
             with open('phuongphapsaulo.csv', 'r', encoding='utf-8') as file:
                 csv_reader = csv.reader(file)
                 next(csv_reader)  # Bỏ qua dòng tiêu đề
-        
+
                 # Tính tổng thu nhập để khởi tạo phương pháp sáu lọ
                 tong_thu_nhap = sum(float(row[1]) for row in csv_reader)
-        
+
                 # Reset về đầu file để đọc lại
                 file.seek(0)
                 next(csv_reader)
-        
+
                 # Thiết lập phương pháp sáu lọ
                 self.thiet_lap_phuong_phap_sau_lo(tong_thu_nhap)
-        
+
                 # Cập nhật số tiền cho từng lọ
                 for row in csv_reader:
                     self._phuong_phap_sau_lo.cap_nhat_so_tien_lo(row[0], float(row[1]))
@@ -261,7 +333,19 @@ class QuanLyTaiChinh:
             print("Không tìm thấy file phuongphapsaulo.csv")
         except Exception as e:
             print(f"Lỗi khi đọc file phuongphapsaulo.csv: {e}")
-    
+
+        # Nhập mục tiêu tiết kiệm
+        try:
+            with open('muctieutietkiem.csv', 'r', encoding='utf-8') as file:
+                csv_reader = csv.reader(file)
+                next(csv_reader)  # Bỏ qua dòng tiêu đề
+                for row in csv_reader:
+                    self._muc_tieu_tiet_kiem[row[0]] = float(row[1])
+        except FileNotFoundError:
+            print("Không tìm thấy file muctieutietkiem.csv")
+        except Exception as e:
+            print(f"Lỗi khi đọc file muctieutietkiem.csv: {e}")
+
     def tinh_tong_thu_nhap(self) -> float:
         """
         Tính tổng thu nhập từ tất cả các tài khoản
@@ -346,7 +430,7 @@ class QuanLyTaiChinh:
         for tai_khoan in self._tai_khoan:
             danh_muc_chi_tieu = {}
             for giao_dich in tai_khoan.lay_giao_dich():
-                if giao_dich.lay_loai() == "chi tiêu":
+                if giao_dich.lay_loai() == "Chi tiêu":
                     if giao_dich._danh_muc not in danh_muc_chi_tieu:
                         danh_muc_chi_tieu[giao_dich._danh_muc] = []
                     danh_muc_chi_tieu[giao_dich._danh_muc].append(giao_dich.lay_so_tien())
@@ -382,14 +466,16 @@ class QuanLyTaiChinh:
         """
         self._phuong_phap_sau_lo = PhuongPhapSauLo(tong_thu_nhap)
         self._phuong_phap_sau_lo.phan_bo_thu_nhap()
-
+   
     def lay_thong_ke_tong_quat(self) -> dict:
         """
         Lay thong ke tong quat ve tinh hinh tai chinh
         """
         return {
-            "so_tai_khoan": len(self._tai_khoan),
-            "so_khoan_vay": len(self._khoan_vay),
-            "tong_tai_san": sum(tk.lay_so_du() for tk in self._tai_khoan),
-            "tong_no": sum(kv.lay_so_tien_con_lai() for kv in self._khoan_vay)
+            "Số Tài Khoản": len(self._tai_khoan),
+            "Số Khoản Vay": len(self._khoan_vay),
+            "Tổng Tài Sản": sum(tk.lay_so_du() for tk in self._tai_khoan),
+            "Tổng Nợ": sum(kv.lay_so_tien_con_lai() for kv in self._khoan_vay)
         }
+    
+    

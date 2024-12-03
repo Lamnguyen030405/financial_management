@@ -6,10 +6,6 @@ from datetime import datetime
 import csv
 
 from src.managers.quan_ly_tai_chinh import QuanLyTaiChinh
-from src.models.tai_khoan import TaiKhoan
-from src.models.giao_dich import GiaoDich
-from src.models.khoan_vay import KhoanVay
-from src.models.danh_muc import DanhMuc
 
 class QuanLyTaiChinhGUI:
     def __init__(self):
@@ -65,7 +61,9 @@ class QuanLyTaiChinhGUI:
                 "sub_items": [
                     {"text": "Thêm Giao Dịch", "command": self.them_giao_dich},
                     {"text": "Xóa Giao Dịch", "command": self.xoa_giao_dich},
+                    {"text": "Cập Nhật Giao Dịch", "command": self.cap_nhat_giao_dich},
                     {"text": "Xem Giao Dịch", "command": self.xem_giao_dich}
+                    
                 ]
             },
             {
@@ -73,6 +71,8 @@ class QuanLyTaiChinhGUI:
                 "sub_items": [
                     {"text": "Thêm Khoản Vay", "command": self.them_khoan_vay},
                     {"text": "Xóa Khoản Vay", "command": self.xoa_khoan_vay},
+                    {"text": "Thêm Thanh Toán", "command": self.them_thanh_toan},
+                    {"text": "Xem Lịch Sử Thanh Toán", "command": self.xem_lich_su_thanh_toan},
                     {"text": "Xem Khoản Vay", "command": self.xem_khoan_vay}
                 ]
             },
@@ -81,6 +81,7 @@ class QuanLyTaiChinhGUI:
                 "sub_items": [
                     {"text": "Thêm Danh Mục", "command": self.them_danh_muc},
                     {"text": "Xóa Danh Mục", "command": self.xoa_danh_muc},
+                    {"text": "Cập Nhật Danh Mục", "command": self.cap_nhat_danh_muc},
                     {"text": "Xem Danh Mục", "command": self.xem_danh_muc}
                 ]
             },
@@ -89,20 +90,23 @@ class QuanLyTaiChinhGUI:
                 "sub_items": [
                     {"text": "Tạo Báo Cáo", "command": self.tao_bao_cao},
                     {"text": "Dự Báo Xu Hướng", "command": self.du_bao_xu_huong},
-                    {"text": "Thống Kê Tổng Quát", "command": self.thong_ke_tong_quat}
+                    {"text": "Thống Kê Tổng Quát", "command": self.thong_ke_tong_quat},
+                    {"text": "Đặt mục tiêu tiết kiệm", "command": self.dat_muc_tieu_tiet_kiem}
                 ]
             },
             {
                 "text": "Sáu Lọ", 
                 "sub_items": [
                     {"text": "Thiết Lập", "command": self.thiet_lap_sau_lo},
-                    {"text": "Xem Phân Bổ", "command": self.xem_phan_bo_sau_lo}
+                    {"text": "Xem Phân Bổ", "command": self.xem_phan_bo_sau_lo},
+                    {"text": "Chuyển tiền giữa các lọ", "command": self.chuyen_tien_giua_cac_lo}
                 ]
             },
             {
                 "text": "Dữ Liệu", 
                 "sub_items": [
-                    {"text": "Xuất CSV", "command": self.xuat_csv}
+                    {"text": "Xuất CSV", "command": self.xuat_csv},
+                    {"text": "Nhập CSV", "command": self.nhap_csv}
                 ]
             }
         ]
@@ -114,14 +118,19 @@ class QuanLyTaiChinhGUI:
                 command=lambda m=menu_item: self.toggle_submenu(m)
             )
             main_button.pack(pady=5, padx=10, fill="x")
-
+        
+        def exit_application(): 
+            """Xuất dữ liệu ra CSV và thoát ứng dụng""" 
+            self.xuat_csv() 
+            self.root.quit()
+        
         # Nút thoát
         exit_button = ctk.CTkButton(
             self.sidebar_frame, 
             text="Thoát", 
             fg_color="red", 
             hover_color="darkred", 
-            command=self.root.quit
+            command=exit_application
         )
         exit_button.pack(side="bottom", pady=20, padx=10, fill="x")
 
@@ -203,6 +212,69 @@ class QuanLyTaiChinhGUI:
             # Gọi phương thức xóa danh mục từ quản lý
             self.quan_ly.xoa_danh_muc(id_danh_muc)
             messagebox.showinfo("Thành Công", "Đã xóa danh mục.")
+            
+    def cap_nhat_danh_muc(self):
+        """Cập nhật danh mục trong hệ thống"""
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Cập Nhật Danh Mục")
+        dialog.geometry("400x300")
+
+        # Label hướng dẫn
+        huong_dan_label = ctk.CTkLabel(
+            dialog, 
+            text="Nhập thông tin để cập nhật danh mục", 
+            font=("Helvetica", 14, "bold"),
+            wraplength=350
+        )
+        huong_dan_label.pack(pady=(20, 10))
+
+        # Nhập ID danh mục
+        id_danh_muc_frame = ctk.CTkFrame(dialog)
+        id_danh_muc_frame.pack(pady=10, padx=20, fill="x")
+
+        id_danh_muc_label = ctk.CTkLabel(id_danh_muc_frame, text="ID Danh Mục:", font=("Helvetica", 12))
+        id_danh_muc_label.pack(side="left", padx=10)
+
+        id_danh_muc_entry = ctk.CTkEntry(id_danh_muc_frame, width=150)
+        id_danh_muc_entry.pack(side="right", padx=10)
+
+        # Nhập tên danh mục
+        ten_frame = ctk.CTkFrame(dialog)
+        ten_frame.pack(pady=10, padx=20, fill="x")
+
+        ten_label = ctk.CTkLabel(ten_frame, text="Tên:", font=("Helvetica", 12))
+        ten_label.pack(side="left", padx=10)
+
+        ten_entry = ctk.CTkEntry(ten_frame, width=150)
+        ten_entry.pack(side="right", padx=10)
+
+        # Nhập loại danh mục với dropdown menu
+        loai_label = ctk.CTkLabel(dialog, text="Loại Danh Mục:")
+        loai_label.pack(pady=(10, 0))
+    
+        loai_options = ["Chi tiêu", "Thu nhập"]
+        loai_var = tk.StringVar(dialog)
+        loai_var.set(loai_options[0])
+    
+        loai_dropdown = ttk.Combobox(dialog, textvariable=loai_var, values=loai_options)
+        loai_dropdown.pack(pady=5)
+
+        def submit_cap_nhat():
+            # Lấy thông tin từ các entry
+            id_danh_muc = id_danh_muc_entry.get()
+            ten = ten_entry.get()
+            loai = loai_var.get()  # Lấy giá trị loại danh mục từ dropdown
+
+            # Gọi phương thức cập nhật danh mục
+            if self.quan_ly.cap_nhat_danh_muc(id_danh_muc, ten, loai):
+                messagebox.showinfo("Thành Công", "Cập nhật danh mục thành công!")
+                dialog.destroy()
+            else:
+                messagebox.showerror("Lỗi", "Không thể cập nhật danh mục!")
+
+        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_cap_nhat)
+        submit_button.pack(pady=20)
 
     def them_tai_khoan(self):
         """Thêm tài khoản mới"""
@@ -361,7 +433,7 @@ class QuanLyTaiChinhGUI:
         table_frame.pack(padx=20, pady=10, fill="both", expand=True)
 
         # Tạo bảng
-        columns = ("ID", "Số Tiền", "Người Cho Vay", "Người Vay", "Lãi Suất", "Ngày Bắt Đầu", "Ngày Đến Hạn", "Trạng Thái")
+        columns = ("ID", "Số Tiền", "Người Cho Vay", "Người Vay", "Lãi Suất", "Ngày Bắt Đầu", "Ngày Đến Hạn", "Trạng Thái", "Số Tiền Còn Lại")
         loan_table = ttk.Treeview(table_frame, columns=columns, show='headings')
         loan_table.pack(fill="both", expand=True)
 
@@ -378,12 +450,18 @@ class QuanLyTaiChinhGUI:
         loan_table.column("Ngày Bắt Đầu", width=100)
         loan_table.column("Ngày Đến Hạn", width=100)
         loan_table.column("Trạng Thái", width=100)
+        loan_table.column("Số Tiền Còn Lại", width=100)
 
         # Đọc dữ liệu từ file CSV và thêm vào bảng
-        with open(file_path, mode='r', encoding='utf-8') as file:
-            csv_reader = csv.DictReader(file)
-            for row in csv_reader:
-                loan_table.insert("", "end", values=(row["ID"], row["Số Tiền"], row["Người Cho Vay"], row["Người Vay"], row["Lãi Suất"], row["Ngày Bắt Đầu"], row["Ngày Đến Hạn"], row["Trạng Thái"]))
+        try:
+            with open(file_path, mode='r', encoding='utf-8') as file:
+                csv_reader = csv.DictReader(file)
+                for row in csv_reader:
+                    loan_table.insert("", "end", values=(row["ID"], row["Số Tiền"], row["Người Cho Vay"], row["Người Vay"], row["Lãi Suất"], row["Ngày Bắt Đầu"], row["Ngày Đến Hạn"], row["Trạng Thái"], row["Số Tiền Còn Lại"]))
+        except FileNotFoundError:
+            messagebox.showerror("Lỗi", f"Không tìm thấy file {file_path}")
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Lỗi khi đọc file {file_path}: {e}")
 
     def xem_danh_muc(self):
         """Hiển thị thông tin danh mục từ file CSV"""
@@ -426,6 +504,51 @@ class QuanLyTaiChinhGUI:
             for row in csv_reader:
                 category_table.insert("", "end", values=(row["ID"], row["Tên"], row["Loại"], row["Mô Tả"]))
 
+    def xem_lich_su_thanh_toan(self):
+        """Hiển thị lịch sử thanh toán từ file CSV"""
+        file_path = 'lichsuthanhtoan.csv'
+
+        # Xóa các widget cũ trong content frame
+        for widget in self.content_frame.winfo_children():
+            widget.destroy()
+
+        # Tạo tiêu đề
+        title_label = ctk.CTkLabel(
+            self.content_frame, 
+            text="Lịch Sử Thanh Toán", 
+            font=("Helvetica", 20, "bold")
+        )
+        title_label.pack(pady=20)
+
+        # Tạo khung chứa bảng lịch sử thanh toán
+        table_frame = ctk.CTkFrame(self.content_frame)
+        table_frame.pack(padx=20, pady=10, fill="both", expand=True)
+
+        # Tạo bảng
+        columns = ("ID Khoản Vay", "Số Tiền", "Ngày Thanh Toán")
+        payment_table = ttk.Treeview(table_frame, columns=columns, show='headings')
+        payment_table.pack(fill="both", expand=True)
+
+        # Đặt tên cho các cột
+        for col in columns:
+            payment_table.heading(col, text=col)
+
+        # Đặt độ rộng cho các cột
+        payment_table.column("ID Khoản Vay", width=150)
+        payment_table.column("Số Tiền", width=100)
+        payment_table.column("Ngày Thanh Toán", width=150)
+
+        # Đọc dữ liệu từ file CSV và thêm vào bảng
+        try:
+            with open(file_path, mode='r', encoding='utf-8') as file:
+                csv_reader = csv.DictReader(file)
+                for row in csv_reader:
+                    payment_table.insert("", "end", values=(row["ID Khoản Vay"], row["Số Tiền"], row["Ngày Thanh Toán"]))
+        except FileNotFoundError:
+            messagebox.showerror("Lỗi", f"Không tìm thấy file {file_path}")
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Lỗi khi đọc file {file_path}: {e}")
+
     def them_giao_dich(self):
         """Thêm giao dịch mới"""
         dialog = ctk.CTkToplevel(self.root)
@@ -436,8 +559,6 @@ class QuanLyTaiChinhGUI:
             ("ID Giao Dịch", "id"),
             ("ID Tài Khoản", "id_tai_khoan"),
             ("Số Tiền", "so_tien"),
-            ("Loại Giao Dịch", "loai"),
-            ("Danh Mục", "danh_muc"),
             ("Ngày", "ngay"),
             ("Ghi Chú", "ghi_chu")
         ]
@@ -445,11 +566,34 @@ class QuanLyTaiChinhGUI:
         entry_widgets = {}
         for i, (label_text, attr_name) in enumerate(entries):
             label = ctk.CTkLabel(dialog, text=label_text)
-            label.pack(pady=(10 if i==0 else 5, 0))
-            
+            label.pack(pady=(10 if i == 0 else 5, 0))
+    
             entry = ctk.CTkEntry(dialog, width=300)
             entry.pack(pady=5)
             entry_widgets[attr_name] = entry
+
+        # Thêm dropdown để chọn loại giao dịch
+        loai_giao_dich_label = ctk.CTkLabel(dialog, text="Loại Giao Dịch")
+        loai_giao_dich_label.pack(pady=(10, 0))
+
+        loai_giao_dich_options = ["Chi tiêu", "Thu nhập"]
+        loai_giao_dich_var = tk.StringVar(dialog)
+        loai_giao_dich_var.set(loai_giao_dich_options[0])
+
+        loai_giao_dich_dropdown = ttk.Combobox(dialog, textvariable=loai_giao_dich_var, values=loai_giao_dich_options)
+        loai_giao_dich_dropdown.pack(pady=5)
+
+        # Thêm dropdown để chọn danh mục
+        danh_muc_label = ctk.CTkLabel(dialog, text="Danh Mục")
+        danh_muc_label.pack(pady=(10, 0))
+
+        # Lấy danh sách tên danh mục từ self.quan_ly._danh_muc
+        danh_muc_options = [dm._ten for dm in self.quan_ly._danh_muc]
+        danh_muc_var = tk.StringVar(dialog)
+        danh_muc_var.set(danh_muc_options[0] if danh_muc_options else "")
+
+        danh_muc_dropdown = ttk.Combobox(dialog, textvariable=danh_muc_var, values=danh_muc_options)
+        danh_muc_dropdown.pack(pady=5)
 
         def submit():
             try:
@@ -457,12 +601,12 @@ class QuanLyTaiChinhGUI:
                     entry_widgets['id'].get(),
                     entry_widgets['id_tai_khoan'].get(),
                     float(entry_widgets['so_tien'].get()),
-                    entry_widgets['loai'].get(),
-                    entry_widgets['danh_muc'].get(),
+                    loai_giao_dich_var.get(),  # Lấy giá trị loại giao dịch từ dropdown
+                    danh_muc_var.get(),  # Lấy giá trị danh mục từ dropdown
                     datetime.strptime(entry_widgets['ngay'].get(), "%Y-%m-%d"),
                     entry_widgets['ghi_chu'].get()
                 )
-                
+        
                 if self.quan_ly.them_giao_dich(giao_dich):
                     messagebox.showinfo("Thành Công", "Thêm giao dịch thành công!")
                     dialog.destroy()
@@ -482,6 +626,83 @@ class QuanLyTaiChinhGUI:
         if id_tai_khoan and id_giao_dich:
             self.quan_ly.xoa_giao_dich(id_tai_khoan, id_giao_dich)
             messagebox.showinfo("Thành Công", "Đã xóa giao dịch.")
+            
+    def cap_nhat_giao_dich(self):
+        """Cập nhật giao dịch trong một tài khoản"""
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Cập Nhật Giao Dịch")
+        dialog.geometry("400x400")
+
+        # Label hướng dẫn
+        huong_dan_label = ctk.CTkLabel(
+            dialog, 
+            text="Nhập thông tin để cập nhật giao dịch", 
+            font=("Helvetica", 14, "bold"),
+            wraplength=350
+        )
+        huong_dan_label.pack(pady=(20, 10))
+
+        # Nhập ID tài khoản
+        id_tai_khoan_frame = ctk.CTkFrame(dialog)
+        id_tai_khoan_frame.pack(pady=10, padx=20, fill="x")
+
+        id_tai_khoan_label = ctk.CTkLabel(id_tai_khoan_frame, text="ID Tài Khoản:", font=("Helvetica", 12))
+        id_tai_khoan_label.pack(side="left", padx=10)
+
+        id_tai_khoan_entry = ctk.CTkEntry(id_tai_khoan_frame, width=150)
+        id_tai_khoan_entry.pack(side="right", padx=10)
+
+        # Nhập ID giao dịch
+        id_giao_dich_frame = ctk.CTkFrame(dialog)
+        id_giao_dich_frame.pack(pady=10, padx=20, fill="x")
+
+        id_giao_dich_label = ctk.CTkLabel(id_giao_dich_frame, text="ID Giao Dịch:", font=("Helvetica", 12))
+        id_giao_dich_label.pack(side="left", padx=10)
+
+        id_giao_dich_entry = ctk.CTkEntry(id_giao_dich_frame, width=150)
+        id_giao_dich_entry.pack(side="right", padx=10)
+
+        # Nhập số tiền
+        so_tien_frame = ctk.CTkFrame(dialog)
+        so_tien_frame.pack(pady=10, padx=20, fill="x")
+
+        so_tien_label = ctk.CTkLabel(so_tien_frame, text="Số Tiền:", font=("Helvetica", 12))
+        so_tien_label.pack(side="left", padx=10)
+
+        so_tien_entry = ctk.CTkEntry(so_tien_frame, width=150)
+        so_tien_entry.pack(side="right", padx=10)
+
+        # Nhập loại giao dịch với dropdown menu
+        loai_label = ctk.CTkLabel(dialog, text="Loại Giao Dịch:")
+        loai_label.pack(pady=(10, 0))
+    
+        loai_options = ["Chi tiêu", "Thu nhập"]
+        loai_var = tk.StringVar(dialog)
+        loai_var.set(loai_options[0])
+    
+        loai_dropdown = ttk.Combobox(dialog, textvariable=loai_var, values=loai_options)
+        loai_dropdown.pack(pady=5)
+
+        def submit_cap_nhat():
+            try:
+                # Lấy thông tin từ các entry
+                id_tai_khoan = id_tai_khoan_entry.get()
+                id_giao_dich = id_giao_dich_entry.get()
+                so_tien = float(so_tien_entry.get())
+                loai = loai_var.get()  # Lấy giá trị loại giao dịch từ dropdown
+
+                # Gọi phương thức cập nhật giao dịch
+                if self.quan_ly.cap_nhat_giao_dich(id_tai_khoan, id_giao_dich, so_tien, loai):
+                    messagebox.showinfo("Thành Công", "Cập nhật giao dịch thành công!")
+                    dialog.destroy()
+                else:
+                    messagebox.showerror("Lỗi", "Không thể cập nhật giao dịch!")
+            except ValueError:
+                messagebox.showerror("Lỗi", "Vui lòng nhập số tiền hợp lệ!")
+
+        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_cap_nhat)
+        submit_button.pack(pady=20)
 
     def them_khoan_vay(self):
         """Thêm khoản vay mới"""
@@ -537,6 +758,70 @@ class QuanLyTaiChinhGUI:
         if id_khoan_vay:
             self.quan_ly.xoa_khoan_vay(id_khoan_vay)
             messagebox.showinfo("Thành Công", "Đã xóa khoản vay.")
+            
+    def them_thanh_toan(self):
+        """Thêm thanh toán mới cho khoản vay"""
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Thêm Thanh Toán")
+        dialog.geometry("400x300")
+
+        # Label hướng dẫn
+        huong_dan_label = ctk.CTkLabel(
+            dialog, 
+            text="Nhập thông tin để thêm thanh toán cho khoản vay", 
+            font=("Helvetica", 14, "bold"),
+            wraplength=350
+        )
+        huong_dan_label.pack(pady=(20, 10))
+
+        # Nhập ID khoản vay
+        id_khoan_vay_frame = ctk.CTkFrame(dialog)
+        id_khoan_vay_frame.pack(pady=10, padx=20, fill="x")
+
+        id_khoan_vay_label = ctk.CTkLabel(id_khoan_vay_frame, text="ID Khoản Vay:", font=("Helvetica", 12))
+        id_khoan_vay_label.pack(side="left", padx=10)
+
+        id_khoan_vay_entry = ctk.CTkEntry(id_khoan_vay_frame, width=150)
+        id_khoan_vay_entry.pack(side="right", padx=10)
+
+        # Nhập số tiền thanh toán
+        so_tien_frame = ctk.CTkFrame(dialog)
+        so_tien_frame.pack(pady=10, padx=20, fill="x")
+
+        so_tien_label = ctk.CTkLabel(so_tien_frame, text="Số Tiền:", font=("Helvetica", 12))
+        so_tien_label.pack(side="left", padx=10)
+
+        so_tien_entry = ctk.CTkEntry(so_tien_frame, width=150)
+        so_tien_entry.pack(side="right", padx=10)
+
+        # Nhập ngày thanh toán
+        ngay_frame = ctk.CTkFrame(dialog)
+        ngay_frame.pack(pady=10, padx=20, fill="x")
+
+        ngay_label = ctk.CTkLabel(ngay_frame, text="Ngày (YYYY-MM-DD):", font=("Helvetica", 12))
+        ngay_label.pack(side="left", padx=10)
+
+        ngay_entry = ctk.CTkEntry(ngay_frame, width=150)
+        ngay_entry.pack(side="right", padx=10)
+
+        def submit_thanh_toan():
+            try:
+                # Lấy thông tin từ các entry
+                id_khoan_vay = id_khoan_vay_entry.get()
+                so_tien = float(so_tien_entry.get())
+                ngay = datetime.strptime(ngay_entry.get(), "%Y-%m-%d")
+
+                # Gọi phương thức thêm thanh toán
+                if self.quan_ly.them_thanh_toan(id_khoan_vay, so_tien, ngay):
+                    messagebox.showinfo("Thành Công", "Thêm thanh toán thành công!")
+                    dialog.destroy()
+                else:
+                    messagebox.showerror("Lỗi", "Không thể thêm thanh toán!")
+            except ValueError as e:
+                messagebox.showerror("Lỗi", str(e))
+
+        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_thanh_toan)
+        submit_button.pack(pady=20)
 
     def tao_bao_cao(self):
         """Tạo báo cáo tài chính"""
@@ -617,7 +902,6 @@ class QuanLyTaiChinhGUI:
 
         messagebox.showinfo("Dự Báo Xu Hướng", "Dự báo xu hướng tài chính đã được cập nhật và hiển thị.")
 
-
     def thong_ke_tong_quat(self):
         """Lấy thống kê tổng quát"""
         thong_ke = self.quan_ly.lay_thong_ke_tong_quat()
@@ -649,11 +933,70 @@ class QuanLyTaiChinhGUI:
 
             value_label = ctk.CTkLabel(row_frame, text=str(value), font=("Helvetica", 14, "bold"))
             value_label.pack(side="right", padx=10)
+    
+    def dat_muc_tieu_tiet_kiem(self):
+        """Đặt mục tiêu tiết kiệm cho một tài khoản"""
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Đặt Mục Tiêu Tiết Kiệm")
+        dialog.geometry("400x300")
+
+        # Label hướng dẫn
+        huong_dan_label = ctk.CTkLabel(
+            dialog, 
+            text="Nhập thông tin để đặt mục tiêu tiết kiệm", 
+            font=("Helvetica", 14, "bold"),
+            wraplength=350
+        )
+        huong_dan_label.pack(pady=(20, 10))
+
+        # Nhập ID tài khoản
+        id_tai_khoan_frame = ctk.CTkFrame(dialog)
+        id_tai_khoan_frame.pack(pady=10, padx=20, fill="x")
+
+        id_tai_khoan_label = ctk.CTkLabel(id_tai_khoan_frame, text="ID Tài Khoản:", font=("Helvetica", 12))
+        id_tai_khoan_label.pack(side="left", padx=10)
+
+        id_tai_khoan_entry = ctk.CTkEntry(id_tai_khoan_frame, width=150)
+        id_tai_khoan_entry.pack(side="right", padx=10)
+
+        # Nhập số tiền mục tiêu
+        so_tien_frame = ctk.CTkFrame(dialog)
+        so_tien_frame.pack(pady=10, padx=20, fill="x")
+
+        so_tien_label = ctk.CTkLabel(so_tien_frame, text="Số Tiền Mục Tiêu:", font=("Helvetica", 12))
+        so_tien_label.pack(side="left", padx=10)
+
+        so_tien_entry = ctk.CTkEntry(so_tien_frame, width=150)
+        so_tien_entry.pack(side="right", padx=10)
+
+        def submit_dat_muc_tieu():
+            try:
+                # Lấy thông tin từ các entry
+                id_tai_khoan = id_tai_khoan_entry.get()
+                so_tien = float(so_tien_entry.get())
+
+                # Gọi phương thức đặt mục tiêu tiết kiệm
+                if self.quan_ly.dat_muc_tieu_tiet_kiem(id_tai_khoan, so_tien):
+                    messagebox.showinfo("Thành Công", "Đặt mục tiêu tiết kiệm thành công!")
+                    dialog.destroy()
+                else:
+                    messagebox.showerror("Lỗi", "Không thể đặt mục tiêu tiết kiệm!")
+            except ValueError:
+                messagebox.showerror("Lỗi", "Vui lòng nhập số tiền hợp lệ!")
+
+        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_dat_muc_tieu)
+        submit_button.pack(pady=20)
 
     def xuat_csv(self):
         """Xuất dữ liệu ra CSV"""
         self.quan_ly.xuat_csv()
         messagebox.showinfo("Xuất CSV", "Xuất dữ liệu CSV thành công!")
+        
+    def nhap_csv(self):
+        """Nhập dữ liệu từ CSV"""
+        self.quan_ly.nhap_csv()
+        messagebox.showinfo("Nhập CSV", "Nhập dữ liệu CSV thành công!")
 
     def thiet_lap_sau_lo(self):
         """Thiết lập phương pháp sáu lọ"""
@@ -671,29 +1014,24 @@ class QuanLyTaiChinhGUI:
         )
         huong_dan_label.pack(pady=(20, 10))
 
-        # Nhập tổng thu nhập
-        thu_nhap_frame = ctk.CTkFrame(dialog)
-        thu_nhap_frame.pack(pady=10, padx=20, fill="x")
-
-        thu_nhap_label = ctk.CTkLabel(thu_nhap_frame, text="Tổng Thu Nhập:", font=("Helvetica", 12))
-        thu_nhap_label.pack(side="left", padx=10)
-
-        thu_nhap_entry = ctk.CTkEntry(thu_nhap_frame, width=150)
-        thu_nhap_entry.pack(side="right", padx=10)
+        # Lấy tổng thu nhập sử dụng hàm tong_thu_nhap
+        tong_thu_nhap = self.quan_ly.tinh_tong_thu_nhap()
 
         def submit_thu_nhap():
-            try:
-                # Lấy tổng thu nhập từ entry
-                tong_thu_nhap = float(thu_nhap_entry.get())
-                
-                # Gọi phương thức thiết lập sáu lọ
-                if self.quan_ly.thiet_lap_phuong_phap_sau_lo(tong_thu_nhap):
-                    messagebox.showinfo("Thành Công", "Thiết lập phương pháp sáu lọ thành công!")
-                    dialog.destroy()
-                else:
-                    messagebox.showerror("Lỗi", "Không thể thiết lập phương pháp sáu lọ!")
-            except ValueError:
-                messagebox.showerror("Lỗi", "Vui lòng nhập số tiền hợp lệ!")
+            # Gọi phương thức thiết lập sáu lọ
+            if not self.quan_ly.thiet_lap_phuong_phap_sau_lo(tong_thu_nhap):
+                messagebox.showinfo("Thành Công", "Thiết lập phương pháp sáu lọ thành công!")
+                dialog.destroy()
+            else:
+                messagebox.showerror("Lỗi", "Không thể thiết lập phương pháp sáu lọ!")
+
+        # Hiển thị tổng thu nhập trong label
+        thu_nhap_label = ctk.CTkLabel(
+            dialog, 
+            text=f"Tổng Thu Nhập: {tong_thu_nhap}", 
+            font=("Helvetica", 12, "bold")
+        )
+        thu_nhap_label.pack(pady=(10, 20))
 
         submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_thu_nhap)
         submit_button.pack(pady=20)
@@ -760,6 +1098,77 @@ class QuanLyTaiChinhGUI:
             )
             so_tien_label.pack(side="right", padx=10)
     
+    def chuyen_tien_giua_cac_lo(self):
+        """Chuyển tiền giữa các lọ"""
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Chuyển Tiền Giữa Các Lọ")
+        dialog.geometry("400x300")
+
+        # Label hướng dẫn
+        huong_dan_label = ctk.CTkLabel(
+            dialog, 
+            text="Nhập thông tin để chuyển tiền giữa các lọ", 
+            font=("Helvetica", 14, "bold"),
+            wraplength=350
+        )
+        huong_dan_label.pack(pady=(20, 10))
+
+        # Nhập lọ nguồn
+        tu_lo_frame = ctk.CTkFrame(dialog)
+        tu_lo_frame.pack(pady=10, padx=20, fill="x")
+
+        tu_lo_label = ctk.CTkLabel(tu_lo_frame, text="Lọ Nguồn:", font=("Helvetica", 12))
+        tu_lo_label.pack(side="left", padx=10)
+
+        tu_lo_options = list(self.quan_ly._phuong_phap_sau_lo._lo.keys())
+        tu_lo_var = tk.StringVar(dialog)
+        tu_lo_var.set(tu_lo_options[0])
+
+        tu_lo_dropdown = ttk.Combobox(tu_lo_frame, textvariable=tu_lo_var, values=tu_lo_options)
+        tu_lo_dropdown.pack(side="right", padx=10)
+
+        # Nhập lọ đích
+        den_lo_frame = ctk.CTkFrame(dialog)
+        den_lo_frame.pack(pady=10, padx=20, fill="x")
+
+        den_lo_label = ctk.CTkLabel(den_lo_frame, text="Lọ Đích:", font=("Helvetica", 12))
+        den_lo_label.pack(side="left", padx=10)
+
+        den_lo_var = tk.StringVar(dialog)
+        den_lo_var.set(tu_lo_options[0])
+
+        den_lo_dropdown = ttk.Combobox(den_lo_frame, textvariable=den_lo_var, values=tu_lo_options)
+        den_lo_dropdown.pack(side="right", padx=10)
+
+        # Nhập số tiền chuyển
+        so_tien_frame = ctk.CTkFrame(dialog)
+        so_tien_frame.pack(pady=10, padx=20, fill="x")
+
+        so_tien_label = ctk.CTkLabel(so_tien_frame, text="Số Tiền:", font=("Helvetica", 12))
+        so_tien_label.pack(side="left", padx=10)
+
+        so_tien_entry = ctk.CTkEntry(so_tien_frame, width=150)
+        so_tien_entry.pack(side="right", padx=10)
+
+        def submit_chuyen_tien():
+            try:
+                # Lấy thông tin từ các entry
+                tu_lo = tu_lo_var.get()
+                den_lo = den_lo_var.get()
+                so_tien = float(so_tien_entry.get())
+
+                # Gọi phương thức chuyển tiền
+                self.quan_ly._phuong_phap_sau_lo.chuyen_tien_giua_cac_lo(tu_lo, den_lo, so_tien)
+                messagebox.showinfo("Thành Công", "Chuyển tiền giữa các lọ thành công!")
+                dialog.destroy()
+            except ValueError as e:
+                messagebox.showerror("Lỗi", str(e))
+
+        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_chuyen_tien)
+        submit_button.pack(pady=20)
+
+
     def run(self):
         """Chạy ứng dụng giao diện"""
         self.root.mainloop()

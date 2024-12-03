@@ -140,12 +140,9 @@ def du_bao_xu_huong():
     print("Dự báo xu hướng tài chính:", du_bao)
 
 def thiet_lap_sau_lo():
-    try:
-        tong_thu_nhap = quan_ly.tinh_tong_thu_nhap()
-        quan_ly.thiet_lap_phuong_phap_sau_lo(tong_thu_nhap)
-        print("Thiết lập phương pháp sáu lọ thành công!")
-    except ValueError:
-        print("Vui lòng nhập số tiền hợp lệ.")
+    tong_thu_nhap = quan_ly.tinh_tong_thu_nhap()
+    quan_ly.thiet_lap_phuong_phap_sau_lo(tong_thu_nhap)
+    print("Thiết lập phương pháp sáu lọ thành công!")
 
 def xem_phan_bo_sau_lo():
     if quan_ly._phuong_phap_sau_lo:

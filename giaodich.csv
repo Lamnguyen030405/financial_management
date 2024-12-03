@@ -1,5 +1,6 @@
 ID,ID Tài Khoản,Số Tiền,Loại,Danh Mục,Ngày,Ghi Chú
 GD01,TK001,3000.0,Chi tiêu,Ăn uống,2024-01-23 00:00:00,Bữa trưa văn phòng
+GD011,TK001,3000.0,Chi tiêu,Lương,2024-12-03 00:00:00,không có
 GD02,TK002,8000.0,Thu nhập,Lương,2024-01-25 00:00:00,Lương tháng 1
 GD03,TK003,1200.0,Chi tiêu,Giải trí,2024-01-26 00:00:00,Đi xem phim cuối tuần
 GD04,TK004,2500.0,Chi tiêu,Hóa đơn,2024-01-27 00:00:00,Hóa đơn tiền điện
