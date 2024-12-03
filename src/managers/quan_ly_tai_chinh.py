@@ -27,6 +27,7 @@ class QuanLyTaiChinh:
             if tk._id == tai_khoan._id:
                 return False
         self._tai_khoan.append(tai_khoan)
+        self.xuat_tai_khoan_csv()
         return True
 
     def xoa_tai_khoan(self, id_tai_khoan: str):
@@ -34,6 +35,7 @@ class QuanLyTaiChinh:
         Xoa tai khoan theo ID
         """
         self._tai_khoan = [tk for tk in self._tai_khoan if tk._id != id_tai_khoan]
+        self.xuat_tai_khoan_csv()
 
     def them_giao_dich(self, giao_dich: GiaoDich):
         """
@@ -43,6 +45,7 @@ class QuanLyTaiChinh:
             if tai_khoan._id == giao_dich._id_tai_khoan:
                 tai_khoan.them_giao_dich(giao_dich)
                 tai_khoan.cap_nhat_so_du()
+                self.xuat_giao_dich_csv()
                 return True
         return False
     
@@ -56,6 +59,7 @@ class QuanLyTaiChinh:
                     if giao_dich._id == id_giao_dich:
                         tai_khoan.xoa_giao_dich(giao_dich)
                 tai_khoan.cap_nhat_so_du()
+                self.xuat_giao_dich_csv()
                 return True
         return False
     
@@ -68,7 +72,8 @@ class QuanLyTaiChinh:
                 for giao_dich in tai_khoan._giao_dich:
                     if giao_dich._id == id_giao_dich:
                         giao_dich.cap_nhat_chi_tiet(so_tien, loai)
-                tai_khoan.cap_nhat_so_du()   
+                tai_khoan.cap_nhat_so_du()
+                self.xuat_giao_dich_csv()
                 return True
         return False
 
@@ -80,6 +85,7 @@ class QuanLyTaiChinh:
             if kv._id == khoan_vay._id:
                 return False
         self._khoan_vay.append(khoan_vay)
+        self.xuat_khoan_vay_csv()
         return True
     
     def xoa_khoan_vay(self, id_khoan_vay: str):
@@ -87,6 +93,7 @@ class QuanLyTaiChinh:
         Xoa mot khoan vay
         """
         self._khoan_vay = [kv for kv in self._khoan_vay if kv._id != id_khoan_vay]
+        self.xoa_khoan_vay()
     
     def them_thanh_toan(self, id_khoan_vay: str, so_tien: float, ngay: datetime):
         for kv in self._khoan_vay:
@@ -103,6 +110,7 @@ class QuanLyTaiChinh:
             if dm._id == danh_muc._id:
                 return False
         self._danh_muc.append(danh_muc)
+        self.xuat_danh_muc_csv()
         return True
     
     def xoa_danh_muc(self, id_danh_muc: str):
@@ -110,6 +118,7 @@ class QuanLyTaiChinh:
         Xoa mot danh muc
         """
         self._danh_muc = [dm for dm in self._danh_muc if dm._id != id_danh_muc]
+        self.xuat_danh_muc_csv()
         
     def cap_nhat_danh_muc(self, id_danh_muc: str, ten: str, loai: str):
         """
@@ -118,12 +127,12 @@ class QuanLyTaiChinh:
         for dm in self._danh_muc: 
             if dm._id == id_danh_muc:
                 dm.cap_nhat_danh_muc(ten, loai)
+                self.xuat_danh_muc_csv()
+                return True
+        return False
     
-    def xuat_csv(self):
-        """
-        Xuất dữ liệu của các đối tượng ra các file CSV tương ứng
-        """
-        # Xuất tài khoản
+    def xuat_tai_khoan_csv(self):
+        """Xuất dữ liệu tài khoản ra file CSV"""
         with open('taikhoan.csv', 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['ID', 'Tên', 'Số Dư', 'Loại'])
@@ -135,7 +144,8 @@ class QuanLyTaiChinh:
                     tai_khoan._loai
                 ])
 
-        # Xuất giao dịch
+    def xuat_giao_dich_csv(self):
+        """Xuất dữ liệu giao dịch ra file CSV"""
         with open('giaodich.csv', 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['ID', 'ID Tài Khoản', 'Số Tiền', 'Loại', 'Danh Mục', 'Ngày', 'Ghi Chú'])
@@ -151,7 +161,8 @@ class QuanLyTaiChinh:
                         giao_dich._ghi_chu
                     ])
 
-        # Xuất danh mục
+    def xuat_danh_muc_csv(self):
+        """Xuất dữ liệu danh mục ra file CSV"""
         with open('danhmuc.csv', 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['ID', 'Tên', 'Loại', 'Mô Tả'])
@@ -162,16 +173,9 @@ class QuanLyTaiChinh:
                     danh_muc._loai, 
                     danh_muc._mo_ta
                 ])
-
-        # Xuất phương pháp sáu lọ
-        if self._phuong_phap_sau_lo:
-            with open('phuongphapsaulo.csv', 'w', newline='', encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerow(['Lọ', 'Số Tiền'])
-                for ten_lo, so_tien in self._phuong_phap_sau_lo._lo.items():
-                    writer.writerow([ten_lo, so_tien])
-
-        # Xuất khoản vay
+    
+    def xuat_khoan_vay_csv(self):
+        """Xuất dữ liệu khoản vay ra file CSV"""
         with open('khoanvay.csv', 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['ID', 'Số Tiền', 'Người Cho Vay', 'Người Vay', 'Lãi Suất', 'Ngày Bắt Đầu', 'Ngày Đến Hạn', 'Trạng Thái', 'Số Tiền Còn Lại'])
@@ -187,6 +191,30 @@ class QuanLyTaiChinh:
                     khoan_vay._trang_thai,
                     khoan_vay.lay_so_tien_con_lai()  # Thêm số tiền còn lại
                 ])
+
+    def xuat_csv(self):
+        """ 
+        Xuất dữ liệu của các đối tượng ra các file CSV tương ứng 
+        """
+        # Xuất tài khoản
+        self.xuat_tai_khoan_csv()
+
+        # Xuất danh mục
+        self.xuat_danh_muc_csv()
+        
+        # Xuất giao dịch
+        self.xuat_giao_dich_csv
+        
+        # Xuất khoản vay
+        self.xuat_khoan_vay_csv()
+
+        # Xuất phương pháp sáu lọ
+        if self._phuong_phap_sau_lo:
+            with open('phuongphapsaulo.csv', 'w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Lọ', 'Số Tiền'])
+                for ten_lo, so_tien in self._phuong_phap_sau_lo._lo.items():
+                    writer.writerow([ten_lo, so_tien])
 
         # Xuất mục tiêu tiết kiệm
         with open('muctieutietkiem.csv', 'w', newline='', encoding='utf-8') as file:
