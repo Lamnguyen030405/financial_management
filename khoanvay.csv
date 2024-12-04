@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ID,Số Tiền,Người Cho Vay,Người Vay,Lãi Suất,Ngày Bắt Đầu,Ngày Đến Hạn,Trạng Thái,Số Tiền Còn Lại
 KV001,500000.0,Nguyễn Văn A,Trần Thị B,0.05,2023-01-01 00:00:00,2023-12-31 00:00:00,qua han,350000.0
 KV002,1000000.0,Trần Thị C,Nguyễn Văn D,0.07,2023-02-15 00:00:00,2024-02-15 00:00:00,dang hoat dong,1000000.0
@@ -10,16 +9,3 @@ KV007,100000.0,Trần Thị M,Phạm Văn N,0.06,2023-07-01 00:00:00,2023-12-31 
 KV008,250000.0,Nguyễn Văn O,Trần Thị P,0.05,2023-08-15 00:00:00,2024-02-15 00:00:00,dang hoat dong,250000.0
 KV009,1200000.0,Nguyễn Thị Q,Nguyễn Văn R,0.07,2023-09-01 00:00:00,2024-09-01 00:00:00,dang hoat dong,1200000.0
 KV010,50000.0,Nguyễn Văn S,Trần Thị T,0.035,2023-10-01 00:00:00,2024-04-01 00:00:00,dang hoat dong,50000.0
-=======
-ID,Số Tiền,Người Cho Vay,Người Vay,Lãi Suất,Ngày Bắt Đầu,Ngày Đến Hạn,Trạng Thái,Số Tiền Còn Lại
-KV001,500000.0,Nguyễn Văn A,Trần Thị B,0.05,2023-01-01 00:00:00,2023-12-31 00:00:00,dang hoat dong,500000.0
-KV002,1000000.0,Trần Thị C,Nguyễn Văn D,0.07,2023-02-15 00:00:00,2024-02-15 00:00:00,dang hoat dong,1000000.0
-KV003,200000.0,Nguyễn Văn E,Phạm Thị F,0.06,2023-03-01 00:00:00,2023-09-01 00:00:00,hoan thanh,200000.0
-KV004,1500000.0,Phạm Thị G,Nguyễn Văn H,0.08,2023-04-01 00:00:00,2024-04-01 00:00:00,tre han,1500000.0
-KV005,300000.0,Nguyễn Văn I,Trần Thị J,0.045,2023-05-01 00:00:00,2024-01-01 00:00:00,dang hoat dong,300000.0
-KV006,700000.0,Nguyễn Văn K,Nguyễn Thị L,0.055,2023-06-01 00:00:00,2024-06-01 00:00:00,dang hoat dong,700000.0
-KV007,100000.0,Trần Thị M,Phạm Văn N,0.06,2023-07-01 00:00:00,2023-12-31 00:00:00,hoan thanh,100000.0
-KV008,250000.0,Nguyễn Văn O,Trần Thị P,0.05,2023-08-15 00:00:00,2024-02-15 00:00:00,dang hoat dong,250000.0
-KV009,1200000.0,Nguyễn Thị Q,Nguyễn Văn R,0.07,2023-09-01 00:00:00,2024-09-01 00:00:00,dang hoat dong,1200000.0
-KV010,50000.0,Nguyễn Văn S,Trần Thị T,0.035,2023-10-01 00:00:00,2024-04-01 00:00:00,dang hoat dong,50000.0
->>>>>>> 1b3acd0 (data)
