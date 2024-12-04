@@ -111,7 +111,7 @@ class QuanLyTaiChinh:
             if kv._id == id_khoan_vay:
                 kv.them_thanh_toan(so_tien, ngay)
                 self.xuat_khoan_vay_csv()
-                self.li
+                self.xuat_lich_su_thanh_toan_csv()
                 return True
         return False
     
@@ -533,5 +533,3 @@ class QuanLyTaiChinh:
             "Tổng Tài Sản": sum(tk.lay_so_du() for tk in self._tai_khoan),
             "Tổng Nợ": sum(kv.lay_so_tien_con_lai() for kv in self._khoan_vay)
         }
-    
-    

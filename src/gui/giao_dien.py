@@ -788,8 +788,7 @@ class QuanLyTaiChinhGUI:
         # Nút Xóa
         submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
         submit_button.pack(pady=20)
-
-            
+       
     def cap_nhat_giao_dich(self):
         
         main_x = self.root.winfo_x()
@@ -1119,8 +1118,7 @@ class QuanLyTaiChinhGUI:
             messagebox.showerror("Lỗi", "Định dạng ngày không hợp lệ!")
         except Exception as e:
             messagebox.showerror("Lỗi", f"Lỗi khi tạo báo cáo: {e}")
-
-            
+  
     def du_bao_xu_huong(self):
         """Dự báo xu hướng tài chính và hiển thị kết quả trên GUI"""
         # Lấy dữ liệu dự báo
