@@ -555,7 +555,7 @@ class QuanLyTaiChinh:
         giao_dich_chuyen = GiaoDich(
             id="GD" + datetime.now().strftime("%Y%m%d%H%M%S"),
             id_tai_khoan=tai_khoan_nguon._id,
-            so_tien=-so_tien,
+            so_tien=so_tien,
             loai="Chi Tiêu",
             danh_muc="",
             ngay=datetime.now(),

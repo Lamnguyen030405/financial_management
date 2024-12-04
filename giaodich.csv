@@ -1,7 +1,7 @@
 ID,ID Tài Khoản,Số Tiền,Loại,Danh Mục,Ngày,Ghi Chú
 GD01,TK001,3000.0,Chi tiêu,Ăn uống,2024-01-23 00:00:00,Bữa trưa văn phòng
 GD11,TK001,1500.0,Chi tiêu,Giải trí,2024-02-03 00:00:00,Vé xem concert
-GD20241204222438,TK001,500.0,Thu Nhập,,2024-12-04 22:24:38,Nhận tiền từ TK005
+GD20241204230628,TK001,500.0,Thu Nhập,,2024-12-04 23:06:28,Nhận tiền từ TK005
 GD02,TK002,8000.0,Thu nhập,Lương,2024-01-25 00:00:00,Lương tháng 1
 GD12,TK002,3000.0,Chi tiêu,Hóa đơn,2024-02-04 00:00:00,Hóa đơn nước
 GD03,TK003,1200.0,Chi tiêu,Giải trí,2024-01-26 00:00:00,Đi xem phim cuối tuần
@@ -10,7 +10,7 @@ GD04,TK004,2500.0,Chi tiêu,Hóa đơn,2024-01-27 00:00:00,Hóa đơn tiền đi
 GD14,TK004,6000.0,Chi tiêu,Mua sắm,2024-02-06 00:00:00,Mua quần áo mới
 GD05,TK005,500.0,Thu nhập,Lãi suất,2024-01-28 00:00:00,Lãi tiết kiệm tháng 1
 GD15,TK005,20000.0,Thu nhập,Đầu tư,2024-02-07 00:00:00,Lợi nhuận bất động sản
-GD20241204222438,TK005,-500.0,Chi Tiêu,,2024-12-04 22:24:38,Chuyển tiền từ TK005 đến TK001
+GD20241204230628,TK005,500.0,Chi Tiêu,,2024-12-04 23:06:28,Chuyển tiền từ TK005 đến TK001
 GD06,TK006,4000.0,Chi tiêu,Mua sắm,2024-01-29 00:00:00,Mua sách và đồ dùng học tập
 GD16,TK006,900.0,Chi tiêu,Xe cộ,2024-02-08 00:00:00,Phí bảo dưỡng xe
 GD07,TK007,15000.0,Thu nhập,Đầu tư,2024-01-30 00:00:00,Lợi nhuận từ chứng khoán

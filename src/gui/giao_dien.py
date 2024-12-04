@@ -69,8 +69,6 @@ class QuanLyTaiChinhGUI:
         )
         self.title_label.pack(pady=30)
 
-        # Tạo hiệu ứng động cho tiêu đề
-        self.animate_title()
 
         # Menu chính
         self.create_main_menu()
@@ -125,23 +123,6 @@ class QuanLyTaiChinhGUI:
         r1, g1, b1 = self.bg_colors[0]
         r2, g2, b2 = self.bg_colors[1]
         return f'#{r1:02x}{g2:02x}{b1:02x}'
-
-    def animate_title(self):
-        """Tạo hiệu ứng động cho tiêu đề"""
-        current_font_size = 24
-        increment = 1
-        
-        def update_font_size():
-            nonlocal current_font_size, increment
-            
-            current_font_size += increment
-            if current_font_size > 26 or current_font_size < 24:
-                increment *= -1
-            
-            self.title_label.configure(font=("Helvetica", current_font_size, "bold"))
-            self.root.after(100, update_font_size)
-        
-        update_font_size()
     
     def create_main_menu(self):
         """Tạo menu chính với các mục chí   nh"""
@@ -370,7 +351,6 @@ class QuanLyTaiChinhGUI:
         )
         submit_button.pack(pady=20)
 
-
     def xoa_danh_muc(self):
         """Xóa danh mục với giao diện nhập liệu"""
         # Lấy vị trí và kích thước cửa sổ chính
@@ -416,7 +396,6 @@ class QuanLyTaiChinhGUI:
             corner_radius=10
         )
         submit_button.pack(pady=20)
-
       
     def cap_nhat_danh_muc(self):
         main_x = self.root.winfo_x()
