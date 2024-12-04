@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ID,Tên,Số Dư,Loại
 TK001,Tài khoản test,-4500.0,Chi tiêu
 TK002,Tài khoản chính,5000.0,Thu nhập
@@ -9,3 +10,15 @@ TK007,Tài khoản dự phòng,14500.0,Tiết kiệm
 TK008,Tài khoản du lịch,1800.0,Chi tiêu
 TK009,Tài khoản giáo dục,-2400.0,Chi tiêu
 TK010,Tài khoản thưởng,8800.0,Thu nhập
+=======
+ID,Tên,Số Dư,Loại
+TK001,Tài khoản test,-6000.0,Chi tiêu
+TK003,Tài khoản tiết kiệm,-1400.0,Tiết kiệm
+TK004,Tài khoản mua sắm,-2500.0,Chi tiêu
+TK005,Tài khoản giải trí,500.0,Chi tiêu
+TK006,Tài khoản đầu tư,-4000.0,Đầu tư
+TK007,Tài khoản dự phòng,15000.0,Tiết kiệm
+TK008,Tài khoản du lịch,-700.0,Chi tiêu
+TK009,Tài khoản giáo dục,-5000.0,Chi tiêu
+TK010,TK Moi,2000.0,Thua
+>>>>>>> 1b3acd0 (data)
