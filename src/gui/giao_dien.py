@@ -57,6 +57,7 @@ class QuanLyTaiChinhGUI:
                 "sub_items": [
                     {"text": "Thêm Tài Khoản", "command": self.them_tai_khoan},
                     {"text": "Xóa Tài Khoản", "command": self.xoa_tai_khoan},
+                    {"text": "Chuyển Khoản", "command": self.chuyen_khoan},
                     {"text": "Xem Tài Khoản", "command": self.xem_tai_khoan}
                 ]
             },
@@ -1485,6 +1486,89 @@ class QuanLyTaiChinhGUI:
 
         submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_chuyen_tien)
         submit_button.pack(pady=20)
+        
+    def chuyen_khoan(self):
+        """Giao diện chuyển khoản giữa các tài khoản"""
+        # Lấy vị trí và kích thước cửa sổ chính
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Chuyển Khoản")
+        dialog.geometry("400x400")
+
+        # Đặt vị trí cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
+
+        # Label hướng dẫn
+        huong_dan_label = ctk.CTkLabel(
+            dialog, 
+            text="Nhập thông tin chuyển khoản", 
+            font=("Helvetica", 14, "bold")
+        )
+        huong_dan_label.pack(pady=20)
+
+        # Nhập tài khoản nguồn
+        tk_nguon_frame = ctk.CTkFrame(dialog)
+        tk_nguon_frame.pack(pady=10, padx=20, fill="x")
+
+        tk_nguon_label = ctk.CTkLabel(tk_nguon_frame, text="Tài Khoản Nguồn:", font=("Helvetica", 12))
+        tk_nguon_label.pack(side="left", padx=10)
+
+        tk_nguon_entry = ctk.CTkEntry(tk_nguon_frame, width=200)
+        tk_nguon_entry.pack(side="right", padx=10)
+
+        # Nhập tài khoản đích
+        tk_dich_frame = ctk.CTkFrame(dialog)
+        tk_dich_frame.pack(pady=10, padx=20, fill="x")
+
+        tk_dich_label = ctk.CTkLabel(tk_dich_frame, text="Tài Khoản Đích:", font=("Helvetica", 12))
+        tk_dich_label.pack(side="left", padx=10)
+
+        tk_dich_entry = ctk.CTkEntry(tk_dich_frame, width=200)
+        tk_dich_entry.pack(side="right", padx=10)
+
+        # Nhập số tiền
+        so_tien_frame = ctk.CTkFrame(dialog)
+        so_tien_frame.pack(pady=10, padx=20, fill="x")
+
+        so_tien_label = ctk.CTkLabel(so_tien_frame, text="Số Tiền:", font=("Helvetica", 12))
+        so_tien_label.pack(side="left", padx=10)
+
+        so_tien_entry = ctk.CTkEntry(so_tien_frame, width=200)
+        so_tien_entry.pack(side="right", padx=10)
+
+        def submit_chuyen_khoan():
+            """Xử lý chuyển khoản khi nhấn nút xác nhận"""
+            id_nguon = tk_nguon_entry.get()
+            id_dich = tk_dich_entry.get()
+            try:
+                so_tien = float(so_tien_entry.get())
+            except ValueError:
+                messagebox.showerror("Lỗi", "Số tiền không hợp lệ. Vui lòng nhập số hợp lệ.")
+                return
+
+            # Gọi hàm chuyen_tien từ backend
+            if self.quan_ly.chuyen_tien(id_nguon, id_dich, so_tien):
+                messagebox.showinfo("Thành Công", f"Chuyển {so_tien} từ {id_nguon} sang {id_dich} thành công.")
+                dialog.destroy()
+            else:
+                messagebox.showerror("Lỗi", "Chuyển khoản thất bại. Vui lòng kiểm tra lại thông tin.")
+
+        # Nút xác nhận
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_chuyen_khoan,
+            fg_color="#2D2A4A",  # Màu Galaxy
+            hover_color="#4E44A8",  # Tím
+            text_color="#FFFFFF"
+        )
+        submit_button.pack(pady=20)
+
+    
 
     def run(self):
         """Chạy ứng dụng giao diện"""

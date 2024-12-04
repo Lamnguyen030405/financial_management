@@ -1,8 +1,10 @@
 ID,ID Tài Khoản,Số Tiền,Loại,Danh Mục,Ngày,Ghi Chú
 GD01,TK001,3000.0,Chi tiêu,Ăn uống,2024-01-23 00:00:00,Bữa trưa văn phòng
 GD11,TK001,1500.0,Chi tiêu,Giải trí,2024-02-03 00:00:00,Vé xem concert
+gd20241204221505,TK001,500.0,Thu Nhập,,2024-12-04 22:15:05,Nhận tiền từ TK002
 GD02,TK002,8000.0,Thu nhập,Lương,2024-01-25 00:00:00,Lương tháng 1
 GD12,TK002,3000.0,Chi tiêu,Hóa đơn,2024-02-04 00:00:00,Hóa đơn nước
+gd20241204221505,TK002,-500.0,Chi Tiêu,,2024-12-04 22:15:05,Chuyển tiền từ TK002 đến TK001
 GD03,TK003,1200.0,Chi tiêu,Giải trí,2024-01-26 00:00:00,Đi xem phim cuối tuần
 GD13,TK003,800.0,Thu nhập,Lãi suất,2024-02-05 00:00:00,Lãi tiết kiệm tháng 2
 GD04,TK004,2500.0,Chi tiêu,Hóa đơn,2024-01-27 00:00:00,Hóa đơn tiền điện

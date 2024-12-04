@@ -533,3 +533,49 @@ class QuanLyTaiChinh:
             "Tổng Tài Sản": sum(tk.lay_so_du() for tk in self._tai_khoan),
             "Tổng Nợ": sum(kv.lay_so_tien_con_lai() for kv in self._khoan_vay)
         }
+    
+    def chuyen_tien(self, id_tai_khoan_nguon: str, id_tai_khoan_dich: str, so_tien: float) -> bool:
+        # Tìm tài khoản nguồn và đích
+        tai_khoan_nguon = next((tk for tk in self._tai_khoan if tk._id == id_tai_khoan_nguon), None)
+        tai_khoan_dich = next((tk for tk in self._tai_khoan if tk._id == id_tai_khoan_dich), None)
+
+        # Kiểm tra tài khoản
+        if not tai_khoan_nguon or not tai_khoan_dich:
+            return False
+
+        # Kiểm tra số dư
+        if tai_khoan_nguon._so_du < so_tien:
+            return False
+
+        # Thực hiện chuyển tiền
+        tai_khoan_nguon._so_du -= so_tien
+        tai_khoan_dich._so_du += so_tien
+
+        # Tạo giao dịch
+        giao_dich_chuyen = GiaoDich(
+            id="gd" + datetime.now().strftime("%Y%m%d%H%M%S"),
+            id_tai_khoan=tai_khoan_nguon._id,
+            so_tien=-so_tien,
+            loai="Chi Tiêu",
+            danh_muc="",
+            ngay=datetime.now(),
+            ghi_chu=f"Chuyển tiền từ {tai_khoan_nguon._id} đến {tai_khoan_dich._id}"
+        )
+
+        giao_dich_nhan = GiaoDich(
+            id="gd" + datetime.now().strftime("%Y%m%d%H%M%S"),
+            id_tai_khoan=tai_khoan_dich._id,
+            so_tien=so_tien,
+            loai="Thu Nhập",
+            danh_muc="",
+            ngay=datetime.now(),
+            ghi_chu=f"Nhận tiền từ {tai_khoan_nguon._id}"
+        )
+
+        # Lưu giao dịch
+        tai_khoan_nguon._giao_dich.append(giao_dich_chuyen)
+        tai_khoan_dich._giao_dich.append(giao_dich_nhan)
+        
+        self.xuat_tai_khoan_csv()
+        self.xuat_giao_dich_csv()
+        return True

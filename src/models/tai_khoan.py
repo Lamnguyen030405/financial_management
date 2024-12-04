@@ -40,4 +40,3 @@ class TaiKhoan:
         return self._giao_dich
     
     
-    
