@@ -26,9 +26,12 @@ class GiaoDich:
     def lay_loai(self) -> str:
         return self._loai
 
-    def cap_nhat_chi_tiet(self, so_tien: float, loai: str):
-        self._so_tien = so_tien
-        self._loai = loai
+    def cap_nhat_chi_tiet(self, so_tien: float = None, loai: str = None, danh_muc: str = None, ngay: datetime = None, ghi_chu: str = None):
+        self._so_tien = so_tien or self._so_tien
+        self._loai = loai or self._loai
+        self._danh_muc = danh_muc or self._danh_muc
+        self._ngay = ngay or ngay
+        self._ghi_chu = ghi_chu or self._ghi_chu
        
         
         

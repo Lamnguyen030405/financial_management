@@ -3,13 +3,17 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox, simpledialog
 from datetime import datetime
+from PIL import Image
 import csv
 
+from src.gui.tab_giao_dich import TabGiaoDich
 from src.managers.quan_ly_tai_chinh import QuanLyTaiChinh
 from src.models.tai_khoan import TaiKhoan
 from src.models.khoan_vay import KhoanVay
 from src.models.giao_dich import GiaoDich
 from src.models.danh_muc import DanhMuc
+
+from .tab_tai_khoan import TabTaiKhoan
 
 class QuanLyTaiChinhGUI:
     def __init__(self):
@@ -20,7 +24,11 @@ class QuanLyTaiChinhGUI:
         # Cửa sổ chính
         self.root = ctk.CTk()
         self.root.title("Quản Lý Tài Chính")
+<<<<<<< HEAD
         self.root.geometry("1280x720")
+=======
+        self.root.geometry("1000x800")
+>>>>>>> 9444c73 (giao dien tab)
 
         # Quản lý tài chính backend
         self.quan_ly = QuanLyTaiChinh()
@@ -35,16 +43,20 @@ class QuanLyTaiChinhGUI:
         self.sidebar_frame.pack(side="left", fill="y")
 
         # Khung nội dung
-        self.content_frame = ctk.CTkFrame(self.main_frame)
-        self.content_frame.pack(side="right", fill="both", expand=True, padx=20, pady=20)
-
+        # self.content_frame = ctk.CTkFrame(self.main_frame)
+        # self.content_frame.pack(side="right", fill="both", expand=True, padx=20, pady=20)
+        self.content_frame = ctk.CTkTabview(self.main_frame)
+        self.content_frame.pack(side="right", fill="both", expand="True", padx=10, pady=10)
+        
         # Tiêu đề
         self.title_label = ctk.CTkLabel(
             self.sidebar_frame, 
             text="HỆ THỐNG\nQUẢN LÝ\nTÀI CHÍNH", 
-            font=("Helvetica", 20, "bold")
+            font=("Helvetica", 18, "bold"),
+            image=ctk.CTkImage(Image.open("res/coin.png"), size=(48, 48)),
+            compound="right"
         )
-        self.title_label.pack(pady=20)
+        self.title_label.pack(pady=20, padx=8)
 
         # Menu chính
         self.create_main_menu()
@@ -54,22 +66,20 @@ class QuanLyTaiChinhGUI:
         menu_items = [
             {
                 "text": "Tài Khoản", 
+<<<<<<< HEAD
                 "sub_items": [
                     {"text": "Thêm Tài Khoản", "command": self.them_tai_khoan},
                     {"text": "Xóa Tài Khoản", "command": self.xoa_tai_khoan},
                     {"text": "Chuyển Khoản", "command": self.chuyen_khoan},
                     {"text": "Xem Tài Khoản", "command": self.xem_tai_khoan}
                 ]
+=======
+                "object": TabTaiKhoan
+>>>>>>> 9444c73 (giao dien tab)
             },
             {
-                "text": "Giao Dịch", 
-                "sub_items": [
-                    {"text": "Thêm Giao Dịch", "command": self.them_giao_dich},
-                    {"text": "Xóa Giao Dịch", "command": self.xoa_giao_dich},
-                    {"text": "Cập Nhật Giao Dịch", "command": self.cap_nhat_giao_dich},
-                    {"text": "Xem Giao Dịch", "command": self.xem_giao_dich}
-                    
-                ]
+                "text": "Giao Dịch",
+                "object": TabGiaoDich,
             },
             {
                 "text": "Khoản Vay", 
@@ -116,17 +126,27 @@ class QuanLyTaiChinhGUI:
             }
         ]
 
+        default_tab = None
         for menu_item in menu_items:
+            tab_name = menu_item["text"]
+            self.content_frame.add(tab_name)
             main_button = ctk.CTkButton(
                 self.sidebar_frame, 
-                text=menu_item["text"], 
-                command=lambda m=menu_item: self.toggle_submenu(m)
+                text=tab_name,
+                fg_color="transparent" if default_tab is not None else None,
+                command=lambda t=tab_name: self.toggle_submenu(t)
             )
             main_button.pack(pady=5, padx=10, fill="x")
-        
+            if not default_tab:
+                default_tab = tab_name
+            if menu_item.get("object", None) is not None:
+                menu_item["object"](self.content_frame, tab_name, self.quan_ly)
+        self.content_frame._segmented_button.grid_forget()
+
+
         def exit_application(): 
             """Xuất dữ liệu ra CSV và thoát ứng dụng""" 
-            self.xuat_csv() 
+            self.xuat_csv()
             self.root.quit()
         
         # Nút thoát
@@ -137,34 +157,26 @@ class QuanLyTaiChinhGUI:
             hover_color="darkred", 
             command=exit_application
         )
+        # Nút x trên window
+        self.root.protocol("WM_DELETE_WINDOW", exit_application)
         exit_button.pack(side="bottom", pady=20, padx=10, fill="x")
 
-    def toggle_submenu(self, menu_item):
+    def toggle_submenu(self, tab_name):
         """Hiển thị submenu khi nhấn vào menu chính"""
-        # Xóa các widget cũ trong content frame
-        for widget in self.content_frame.winfo_children():
-            widget.destroy()
+        prev_tab_name = self.content_frame.get()
+        if prev_tab_name == tab_name:
+            return
+        def find_button(text) -> None | ctk.CTkButton:
+            return next((children for id, children in self.sidebar_frame.children.items() if id.startswith("!ctkbutton") and children.cget("text") == text), None)
+        
+        prev_btn = find_button(prev_tab_name)
+        prev_btn.configure(fg_color='transparent')
 
-        # Tạo tiêu đề
-        title_label = ctk.CTkLabel(
-            self.content_frame, 
-            text=menu_item["text"], 
-            font=("Helvetica", 20, "bold")
-        )
-        title_label.pack(pady=20)
+        btn = find_button(tab_name)
+        btn.configure(fg_color=ctk.ThemeManager.theme["CTkButton"]["fg_color"][0 if ctk.get_appearance_mode() == "Light" else 1])
 
-        # Tạo khung chứa các nút con
-        submenu_frame = ctk.CTkFrame(self.content_frame)
-        submenu_frame.pack(padx=20, pady=10, fill="x")
+        self.content_frame.set(tab_name)
 
-        # Tạo các nút chức năng con
-        for sub_item in menu_item.get("sub_items", []):
-            sub_button = ctk.CTkButton(
-                submenu_frame, 
-                text=sub_item["text"], 
-                command=sub_item["command"]
-            )
-            sub_button.pack(pady=5, padx=10, fill="x")
 
     def them_danh_muc(self):
         """Thêm danh mục với giao diện nhập liệu"""
@@ -356,6 +368,7 @@ class QuanLyTaiChinhGUI:
         submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_cap_nhat)
         submit_button.pack(pady=20)
 
+<<<<<<< HEAD
     def them_tai_khoan(self):
         main_x = self.root.winfo_x()
         main_y = self.root.winfo_y()
@@ -530,6 +543,8 @@ class QuanLyTaiChinhGUI:
             for row in csv_reader:
                 transaction_table.insert("", "end", values=(row["ID"], row["ID Tài Khoản"], row["Số Tiền"], row["Loại"], row["Danh Mục"], row["Ngày"], row["Ghi Chú"]))
 
+=======
+>>>>>>> 9444c73 (giao dien tab)
     def xem_khoan_vay(self):
         """Hiển thị thông tin khoản vay từ file CSV"""
         file_path = 'khoanvay.csv'
@@ -667,6 +682,7 @@ class QuanLyTaiChinhGUI:
         except Exception as e:
             messagebox.showerror("Lỗi", f"Lỗi khi đọc file {file_path}: {e}")
 
+<<<<<<< HEAD
     def them_giao_dich(self):
         main_x = self.root.winfo_x()
         main_y = self.root.winfo_y()
@@ -874,6 +890,8 @@ class QuanLyTaiChinhGUI:
         submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_cap_nhat)
         submit_button.pack(pady=20)
 
+=======
+>>>>>>> 9444c73 (giao dien tab)
     def them_khoan_vay(self):
         main_x = self.root.winfo_x()
         main_y = self.root.winfo_y()
@@ -1570,5 +1588,5 @@ class QuanLyTaiChinhGUI:
  
 
     def run(self):
-        """Chạy ứng dụng giao diện"""
+        # Chạy ứng dụng giao diện
         self.root.mainloop()
