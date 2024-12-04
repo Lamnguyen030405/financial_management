@@ -69,15 +69,15 @@ class QuanLyTaiChinh:
                 return True
         return False
     
-    def cap_nhat_giao_dich(self, giao_dich_moi: GiaoDich):
+    def cap_nhat_giao_dich(self, id_tai_khoan: str, id_giao_dich: str, so_tien: float, loai: str):
         """
         Cap nhat giao dich o mot tai khoan
         """
         for tai_khoan in self._tai_khoan:
-            if tai_khoan._id == giao_dich_moi._id_tai_khoan:
+            if tai_khoan._id == id_tai_khoan:
                 for giao_dich in tai_khoan._giao_dich:
-                    if giao_dich._id == giao_dich_moi._id:
-                        giao_dich.cap_nhat_chi_tiet(giao_dich_moi._so_tien, giao_dich_moi._loai, giao_dich_moi._danh_muc, giao_dich_moi._ngay, giao_dich_moi._ghi_chu)
+                    if giao_dich._id == id_giao_dich:
+                        giao_dich.cap_nhat_chi_tiet(so_tien, loai)
                 tai_khoan.cap_nhat_so_du()
                 self.xuat_giao_dich_csv()
                 self.xuat_tai_khoan_csv()
