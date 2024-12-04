@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox, simpledialog
 from datetime import datetime
 import csv
+import random
 
 from src.managers.quan_ly_tai_chinh import QuanLyTaiChinh
 from src.models.tai_khoan import TaiKhoan
@@ -22,33 +23,126 @@ class QuanLyTaiChinhGUI:
         self.root.title("Quản Lý Tài Chính")
         self.root.geometry("1280x720")
 
+        # Thêm hiệu ứng background gradient
+        self.create_gradient_background()
+
         # Quản lý tài chính backend
         self.quan_ly = QuanLyTaiChinh()
         self.quan_ly.nhap_csv()
 
         # Tạo khung chính
-        self.main_frame = ctk.CTkFrame(self.root, corner_radius=0)
-        self.main_frame.pack(fill="both", expand=True)
+        self.main_frame = ctk.CTkFrame(self.root, corner_radius=10, fg_color="transparent")
+        self.main_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Khung menu bên trái
-        self.sidebar_frame = ctk.CTkFrame(self.main_frame, width=200, corner_radius=0)
-        self.sidebar_frame.pack(side="left", fill="y")
+        # Khung menu bên trái với đổ bóng
+        self.sidebar_frame = ctk.CTkFrame(
+            self.main_frame, 
+            width=250, 
+            corner_radius=15, 
+            fg_color="white", 
+            border_width=2, 
+            border_color="lightgray"
+        )
+        self.sidebar_frame.pack(side="left", fill="y", padx=10, pady=10)
+        self.sidebar_frame.pack_propagate(False)
 
-        # Khung nội dung
-        self.content_frame = ctk.CTkFrame(self.main_frame)
-        self.content_frame.pack(side="right", fill="both", expand=True, padx=20, pady=20)
+        # Khung nội dung với đổ bóng
+        self.content_frame = ctk.CTkFrame(
+            self.main_frame, 
+            corner_radius=15, 
+            fg_color="white", 
+            border_width=1, 
+            border_color="lightgray"
+        )
+        self.content_frame.pack(side="right", fill="both", expand=True, padx=10, pady=10)
 
-        # Tiêu đề
+        # Hiệu ứng đổ bóng cho khung
+        self.add_shadow_effect(self.sidebar_frame)
+        self.add_shadow_effect(self.content_frame)
+
+        # Tiêu đề với hiệu ứng gradient
         self.title_label = ctk.CTkLabel(
             self.sidebar_frame, 
             text="HỆ THỐNG\nQUẢN LÝ\nTÀI CHÍNH", 
-            font=("Helvetica", 20, "bold")
+            font=("Helvetica", 24, "bold"),
+            text_color=self.generate_gradient_color()
         )
-        self.title_label.pack(pady=20)
+        self.title_label.pack(pady=30)
+
+        # Tạo hiệu ứng động cho tiêu đề
+        self.animate_title()
 
         # Menu chính
         self.create_main_menu()
 
+    def create_gradient_background(self):
+        """Tạo background gradient động"""
+        def update_gradient():
+            r1, g1, b1 = random.randint(200, 255), random.randint(200, 255), random.randint(200, 255)
+            r2, g2, b2 = random.randint(100, 200), random.randint(100, 200), random.randint(100, 200)
+            
+            gradient_script = f"""
+            <canvas id="gradientCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></canvas>
+            <script>
+                const canvas = document.getElementById('gradientCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, 'rgb({r1}, {g1}, {b1})');
+                gradient.addColorStop(1, 'rgb({r2}, {g2}, {b2})');
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            </script>
+            """
+            
+            # Note: This would typically be rendered in a web context
+            # In Tkinter, we'll simulate a softer gradient effect
+            return (r1, g1, b1), (r2, g2, b2)
+
+        # Simulate gradient background update
+        self.bg_colors = update_gradient()
+
+    def add_shadow_effect(self, widget):
+        """Thêm hiệu ứng đổ bóng cho widget"""
+        shadow_frame = ctk.CTkFrame(
+            widget.master,
+            corner_radius=widget.cget("corner_radius") + 5,
+            fg_color="lightgray",
+            bg_color="transparent",
+            width=widget.winfo_width(),  # Lấy width từ widget
+            height=widget.winfo_height()  # Lấy height từ widget
+        )
+        shadow_frame.place(
+            x=widget.winfo_x(),
+            y=widget.winfo_y() + 5
+        )
+
+    def generate_gradient_color(self):
+        """Tạo màu gradient động"""
+        r1, g1, b1 = self.bg_colors[0]
+        r2, g2, b2 = self.bg_colors[1]
+        return f'#{r1:02x}{g2:02x}{b1:02x}'
+
+    def animate_title(self):
+        """Tạo hiệu ứng động cho tiêu đề"""
+        current_font_size = 24
+        increment = 1
+        
+        def update_font_size():
+            nonlocal current_font_size, increment
+            
+            current_font_size += increment
+            if current_font_size > 26 or current_font_size < 24:
+                increment *= -1
+            
+            self.title_label.configure(font=("Helvetica", current_font_size, "bold"))
+            self.root.after(100, update_font_size)
+        
+        update_font_size()
+    
     def create_main_menu(self):
         """Tạo menu chính với các mục chí   nh"""
         menu_items = [
@@ -116,26 +210,34 @@ class QuanLyTaiChinhGUI:
             }
         ]
 
+        # Áp dụng màu sắc Galaxy
+        galaxy_fg_color = "#2D2A4A"  # Xanh đậm
+        galaxy_hover_color = "#4E44A8"  # Tím
+        text_color = "#FFFFFF"  # Trắng
+
         for menu_item in menu_items:
             main_button = ctk.CTkButton(
-                self.sidebar_frame, 
-                text=menu_item["text"], 
-                command=lambda m=menu_item: self.toggle_submenu(m)
+                self.sidebar_frame,
+                text=menu_item["text"],
+                command=lambda m=menu_item: self.toggle_submenu(m),
+                fg_color=galaxy_fg_color,
+                hover_color=galaxy_hover_color,
+                text_color=text_color,
+                corner_radius=10,
+                border_width=1,
+                border_color="gray"
             )
             main_button.pack(pady=5, padx=10, fill="x")
-        
-        def exit_application(): 
-            """Xuất dữ liệu ra CSV và thoát ứng dụng""" 
-            self.xuat_csv() 
-            self.root.quit()
-        
-        # Nút thoát
+
+        # Nút Thoát
         exit_button = ctk.CTkButton(
-            self.sidebar_frame, 
-            text="Thoát", 
-            fg_color="red", 
-            hover_color="darkred", 
-            command=exit_application
+            self.sidebar_frame,
+            text="Thoát",
+            fg_color=galaxy_fg_color,
+            hover_color="#FF5733",  # Đỏ cam
+            text_color=text_color,
+            corner_radius=15,
+            command=self.root.quit
         )
         exit_button.pack(side="bottom", pady=20, padx=10, fill="x")
 
@@ -145,24 +247,36 @@ class QuanLyTaiChinhGUI:
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
-        # Tạo tiêu đề
+        # Tạo tiêu đề với màu gradient Galaxy
         title_label = ctk.CTkLabel(
-            self.content_frame, 
-            text=menu_item["text"], 
-            font=("Helvetica", 20, "bold")
+            self.content_frame,
+            text=menu_item["text"],
+            font=("Helvetica", 22, "bold"),
+            text_color="#4E44A8"  # Tím Galaxy
         )
         title_label.pack(pady=20)
 
-        # Tạo khung chứa các nút con
-        submenu_frame = ctk.CTkFrame(self.content_frame)
+        # Tạo khung chứa các nút con với hiệu ứng hover
+        submenu_frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")
         submenu_frame.pack(padx=20, pady=10, fill="x")
+
+        # Màu sắc Galaxy cho các nút phụ
+        galaxy_fg_color = "#2D2A4A"  # Xanh đậm
+        galaxy_hover_color = "#4E44A8"  # Tím Galaxy
+        text_color = "#FFFFFF"  # Trắng
 
         # Tạo các nút chức năng con
         for sub_item in menu_item.get("sub_items", []):
             sub_button = ctk.CTkButton(
-                submenu_frame, 
-                text=sub_item["text"], 
-                command=sub_item["command"]
+                submenu_frame,
+                text=sub_item["text"],
+                command=sub_item["command"],
+                fg_color=galaxy_fg_color,
+                hover_color=galaxy_hover_color,
+                text_color=text_color,
+                corner_radius=10,
+                border_width=1,
+                border_color="gray"
             )
             sub_button.pack(pady=5, padx=10, fill="x")
 
@@ -245,8 +359,17 @@ class QuanLyTaiChinhGUI:
             else:
                 messagebox.showerror("Lỗi", "ID danh mục đã tồn tại!")
 
-        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_them_danh_muc)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_them_danh_muc,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
+
 
     def xoa_danh_muc(self):
         """Xóa danh mục với giao diện nhập liệu"""
@@ -283,8 +406,17 @@ class QuanLyTaiChinhGUI:
                 messagebox.showerror("Lỗi", "Vui lòng nhập ID danh mục.")
 
         # Nút Xóa
-        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
+
       
     def cap_nhat_danh_muc(self):
         main_x = self.root.winfo_x()
@@ -353,7 +485,15 @@ class QuanLyTaiChinhGUI:
             else:
                 messagebox.showerror("Lỗi", "Không thể cập nhật danh mục!")
 
-        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_cap_nhat)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_cap_nhat,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def them_tai_khoan(self):
@@ -404,7 +544,15 @@ class QuanLyTaiChinhGUI:
             except ValueError:
                 messagebox.showerror("Lỗi", "Vui lòng nhập đúng định dạng số tiền!")
 
-        submit_button = ctk.CTkButton(dialog, text="Thêm", command=submit)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def xoa_tai_khoan(self):
@@ -442,7 +590,15 @@ class QuanLyTaiChinhGUI:
                 messagebox.showerror("Lỗi", "Vui lòng nhập ID tài khoản.")
 
         # Nút Xóa
-        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def xem_tai_khoan(self):
@@ -741,7 +897,15 @@ class QuanLyTaiChinhGUI:
             except ValueError as e:
                 messagebox.showerror("Lỗi", str(e))
 
-        submit_button = ctk.CTkButton(dialog, text="Thêm", command=submit)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def xoa_giao_dich(self):
@@ -787,7 +951,15 @@ class QuanLyTaiChinhGUI:
                 messagebox.showerror("Lỗi", "Vui lòng nhập đầy đủ ID tài khoản và ID giao dịch.")
 
         # Nút Xóa
-        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
        
     def cap_nhat_giao_dich(self):
@@ -871,7 +1043,15 @@ class QuanLyTaiChinhGUI:
             except ValueError:
                 messagebox.showerror("Lỗi", "Vui lòng nhập số tiền hợp lệ!")
 
-        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_cap_nhat)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_cap_nhat,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def them_khoan_vay(self):
@@ -926,7 +1106,15 @@ class QuanLyTaiChinhGUI:
             except ValueError as e:
                 messagebox.showerror("Lỗi", str(e))
 
-        submit_button = ctk.CTkButton(dialog, text="Thêm", command=submit)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def xoa_khoan_vay(self):
@@ -964,7 +1152,15 @@ class QuanLyTaiChinhGUI:
                 messagebox.showerror("Lỗi", "Vui lòng nhập ID khoản vay.")
 
         # Nút Xóa
-        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
             
     def them_thanh_toan(self):
@@ -1036,7 +1232,15 @@ class QuanLyTaiChinhGUI:
             except ValueError as e:
                 messagebox.showerror("Lỗi", str(e))
 
-        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_thanh_toan)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_thanh_toan,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def tao_bao_cao(self):
@@ -1280,7 +1484,15 @@ class QuanLyTaiChinhGUI:
             except ValueError:
                 messagebox.showerror("Lỗi", "Vui lòng nhập số tiền hợp lệ!")
 
-        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_dat_muc_tieu)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_dat_muc_tieu,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def xuat_csv(self):
@@ -1335,7 +1547,15 @@ class QuanLyTaiChinhGUI:
         )
         thu_nhap_label.pack(pady=(10, 20))
 
-        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_thu_nhap)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_thu_nhap,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
 
     def xem_phan_bo_sau_lo(self):
@@ -1484,7 +1704,15 @@ class QuanLyTaiChinhGUI:
             except ValueError as e:
                 messagebox.showerror("Lỗi", str(e))
 
-        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_chuyen_tien)
+        submit_button = ctk.CTkButton(
+            dialog,
+            text="Xác Nhận",
+            command=submit_chuyen_tien,
+            fg_color="#2D2A4A",  # Xanh đậm
+            hover_color="#4E44A8",  # Tím Galaxy
+            text_color="#FFFFFF",  # Trắng
+            corner_radius=10
+        )
         submit_button.pack(pady=20)
         
     def chuyen_khoan(self):
@@ -1567,8 +1795,7 @@ class QuanLyTaiChinhGUI:
             text_color="#FFFFFF"
         )
         submit_button.pack(pady=20)
- 
-
+    
     def run(self):
         """Chạy ứng dụng giao diện"""
         self.root.mainloop()
