@@ -50,7 +50,7 @@ class QuanLyTaiChinhGUI:
         self.create_main_menu()
 
     def create_main_menu(self):
-        """Tạo menu chính với các mục chính"""
+        """Tạo menu chính với các mục chí   nh"""
         menu_items = [
             {
                 "text": "Tài Khoản", 
@@ -1514,7 +1514,7 @@ class QuanLyTaiChinhGUI:
         tk_nguon_frame = ctk.CTkFrame(dialog)
         tk_nguon_frame.pack(pady=10, padx=20, fill="x")
 
-        tk_nguon_label = ctk.CTkLabel(tk_nguon_frame, text="Tài Khoản Nguồn:", font=("Helvetica", 12))
+        tk_nguon_label = ctk.CTkLabel(tk_nguon_frame, text="ID Tài Khoản Nguồn:", font=("Helvetica", 12))
         tk_nguon_label.pack(side="left", padx=10)
 
         tk_nguon_entry = ctk.CTkEntry(tk_nguon_frame, width=200)
@@ -1524,7 +1524,7 @@ class QuanLyTaiChinhGUI:
         tk_dich_frame = ctk.CTkFrame(dialog)
         tk_dich_frame.pack(pady=10, padx=20, fill="x")
 
-        tk_dich_label = ctk.CTkLabel(tk_dich_frame, text="Tài Khoản Đích:", font=("Helvetica", 12))
+        tk_dich_label = ctk.CTkLabel(tk_dich_frame, text="ID Tài Khoản Đích:", font=("Helvetica", 12))
         tk_dich_label.pack(side="left", padx=10)
 
         tk_dich_entry = ctk.CTkEntry(tk_dich_frame, width=200)
@@ -1567,8 +1567,7 @@ class QuanLyTaiChinhGUI:
             text_color="#FFFFFF"
         )
         submit_button.pack(pady=20)
-
-    
+ 
 
     def run(self):
         """Chạy ứng dụng giao diện"""
