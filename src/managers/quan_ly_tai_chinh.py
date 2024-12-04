@@ -553,7 +553,7 @@ class QuanLyTaiChinh:
 
         # Tạo giao dịch
         giao_dich_chuyen = GiaoDich(
-            id="gd" + datetime.now().strftime("%Y%m%d%H%M%S"),
+            id="GD" + datetime.now().strftime("%Y%m%d%H%M%S"),
             id_tai_khoan=tai_khoan_nguon._id,
             so_tien=-so_tien,
             loai="Chi Tiêu",
@@ -563,7 +563,7 @@ class QuanLyTaiChinh:
         )
 
         giao_dich_nhan = GiaoDich(
-            id="gd" + datetime.now().strftime("%Y%m%d%H%M%S"),
+            id="GD" + datetime.now().strftime("%Y%m%d%H%M%S"),
             id_tai_khoan=tai_khoan_dich._id,
             so_tien=so_tien,
             loai="Thu Nhập",
