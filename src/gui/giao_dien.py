@@ -210,6 +210,10 @@ class QuanLyTaiChinhGUI:
             )
             main_button.pack(pady=5, padx=10, fill="x")
 
+        def Exit():        
+            self.xuat_csv()
+            self.root.quit()
+            
         # Nút Thoát
         exit_button = ctk.CTkButton(
             self.sidebar_frame,
@@ -218,7 +222,7 @@ class QuanLyTaiChinhGUI:
             hover_color="#FF5733",  # Đỏ cam
             text_color=text_color,
             corner_radius=15,
-            command=self.root.quit
+            command=Exit
         )
         exit_button.pack(side="bottom", pady=20, padx=10, fill="x")
 
@@ -620,7 +624,7 @@ class QuanLyTaiChinhGUI:
             csv_reader = csv.DictReader(file)
             for row in csv_reader:
                 account_table.insert("", "end", values=(row["ID"], row["Tên"], row["Số Dư"], row["Loại"]))
-
+    
     def xem_giao_dich(self):
         """Hiển thị thông tin giao dịch từ file CSV"""
         file_path = 'giaodich.csv'

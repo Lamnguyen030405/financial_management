@@ -556,7 +556,7 @@ class QuanLyTaiChinh:
             id="GD" + datetime.now().strftime("%Y%m%d%H%M%S"),
             id_tai_khoan=tai_khoan_nguon._id,
             so_tien=so_tien,
-            loai="Chi Tiêu",
+            loai="Chi tiêu",
             danh_muc="",
             ngay=datetime.now(),
             ghi_chu=f"Chuyển tiền từ {tai_khoan_nguon._id} đến {tai_khoan_dich._id}"
@@ -566,16 +566,17 @@ class QuanLyTaiChinh:
             id="GD" + datetime.now().strftime("%Y%m%d%H%M%S"),
             id_tai_khoan=tai_khoan_dich._id,
             so_tien=so_tien,
-            loai="Thu Nhập",
+            loai="Thu nhập",
             danh_muc="",
             ngay=datetime.now(),
             ghi_chu=f"Nhận tiền từ {tai_khoan_nguon._id}"
         )
 
         # Lưu giao dịch
-        tai_khoan_nguon._giao_dich.append(giao_dich_chuyen)
-        tai_khoan_dich._giao_dich.append(giao_dich_nhan)
-        
+        tai_khoan_nguon.them_giao_dich(giao_dich_chuyen)
+        tai_khoan_dich.them_giao_dich(giao_dich_nhan)
+        tai_khoan_dich.cap_nhat_so_du()
+        tai_khoan_nguon.cap_nhat_so_du()
         self.xuat_tai_khoan_csv()
         self.xuat_giao_dich_csv()
         return True
