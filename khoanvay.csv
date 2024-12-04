@@ -1,5 +1,5 @@
 ID,Số Tiền,Người Cho Vay,Người Vay,Lãi Suất,Ngày Bắt Đầu,Ngày Đến Hạn,Trạng Thái,Số Tiền Còn Lại
-KV001,500000.0,Nguyễn Văn A,Trần Thị B,0.05,2023-01-01 00:00:00,2023-12-31 00:00:00,dang hoat dong,500000.0
+KV001,500000.0,Nguyễn Văn A,Trần Thị B,0.05,2023-01-01 00:00:00,2023-12-31 00:00:00,qua han,450000.0
 KV002,1000000.0,Trần Thị C,Nguyễn Văn D,0.07,2023-02-15 00:00:00,2024-02-15 00:00:00,dang hoat dong,1000000.0
 KV003,200000.0,Nguyễn Văn E,Phạm Thị F,0.06,2023-03-01 00:00:00,2023-09-01 00:00:00,hoan thanh,200000.0
 KV004,1500000.0,Phạm Thị G,Nguyễn Văn H,0.08,2023-04-01 00:00:00,2024-04-01 00:00:00,tre han,1500000.0

@@ -20,7 +20,7 @@ class QuanLyTaiChinhGUI:
         # Cửa sổ chính
         self.root = ctk.CTk()
         self.root.title("Quản Lý Tài Chính")
-        self.root.geometry("1000x700")
+        self.root.geometry("1280x720")
 
         # Quản lý tài chính backend
         self.quan_ly = QuanLyTaiChinh()
@@ -166,63 +166,138 @@ class QuanLyTaiChinhGUI:
             sub_button.pack(pady=5, padx=10, fill="x")
 
     def them_danh_muc(self):
-        """Thêm danh mục mới"""
+        """Thêm danh mục với giao diện nhập liệu"""
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+
+        # Tạo cửa sổ dialog
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Thêm Danh Mục")
-        dialog.geometry("400x500")
+        dialog.geometry("400x720")
 
-        # Các trường nhập liệu
-        entries = [
-            ("ID Danh Mục", "id_danh_muc"),
-            ("Tên Danh Mục", "ten_danh_muc"),
-            ("Loại Danh Mục", "loai_danh_muc"),
-            ("Mô Tả Danh Mục", "mo_ta_danh_muc")
-        ]
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
 
-        entry_widgets = {}
-        for i, (label_text, attr_name) in enumerate(entries):
-            label = ctk.CTkLabel(dialog, text=label_text)
-            label.pack(pady=(10 if i==0 else 5, 0))
-            
-            entry = ctk.CTkEntry(dialog, width=300)
-            entry.pack(pady=5)
-            entry_widgets[attr_name] = entry
+        # Label hướng dẫn
+        huong_dan_label = ctk.CTkLabel(
+            dialog,
+            text="Nhập thông tin để thêm danh mục mới",
+            font=("Helvetica", 14, "bold"),
+            wraplength=350
+        )
+        huong_dan_label.pack(pady=(20, 10))
 
-        def submit():
-            # Lấy giá trị từ các ô nhập liệu
-            danh_muc = DanhMuc(
-                entry_widgets['id_danh_muc'].get(),
-                entry_widgets['ten_danh_muc'].get(),
-                entry_widgets['loai_danh_muc'].get(),
-                entry_widgets['mo_ta_danh_muc'].get()
-            )
-            
-            # Thử thêm danh mục
+        # Nhập ID danh mục
+        id_danh_muc_frame = ctk.CTkFrame(dialog)
+        id_danh_muc_frame.pack(pady=10, padx=20, fill="x")
+
+        id_danh_muc_label = ctk.CTkLabel(id_danh_muc_frame, text="ID Danh Mục:", font=("Helvetica", 12))
+        id_danh_muc_label.pack(side="left", padx=10)
+
+        id_danh_muc_entry = ctk.CTkEntry(id_danh_muc_frame, width=150)
+        id_danh_muc_entry.pack(side="right", padx=10)
+
+        # Nhập tên danh mục
+        ten_frame = ctk.CTkFrame(dialog)
+        ten_frame.pack(pady=10, padx=20, fill="x")
+
+        ten_label = ctk.CTkLabel(ten_frame, text="Tên:", font=("Helvetica", 12))
+        ten_label.pack(side="left", padx=10)
+
+        ten_entry = ctk.CTkEntry(ten_frame, width=150)
+        ten_entry.pack(side="right", padx=10)
+
+        # Nhập loại danh mục với dropdown menu
+        loai_label = ctk.CTkLabel(dialog, text="Loại Danh Mục:")
+        loai_label.pack(pady=(10, 0))
+
+        loai_options = ["Chi tiêu", "Thu nhập"]
+        loai_var = tk.StringVar(dialog)
+        loai_var.set(loai_options[0])
+
+        loai_dropdown = ttk.Combobox(dialog, textvariable=loai_var, values=loai_options)
+        loai_dropdown.pack(pady=5)
+
+        # Nhập mô tả danh mục
+        mo_ta_frame = ctk.CTkFrame(dialog)
+        mo_ta_frame.pack(pady=10, padx=20, fill="x")
+
+        mo_ta_label = ctk.CTkLabel(mo_ta_frame, text="Mô Tả:", font=("Helvetica", 12))
+        mo_ta_label.pack(side="left", padx=10)
+
+        mo_ta_entry = ctk.CTkEntry(mo_ta_frame, width=150)
+        mo_ta_entry.pack(side="right", padx=10)
+
+        def submit_them_danh_muc():
+            # Lấy thông tin từ các entry
+            id_danh_muc = id_danh_muc_entry.get()
+            ten = ten_entry.get()
+            loai = loai_var.get()  # Lấy giá trị loại danh mục từ dropdown
+            mo_ta = mo_ta_entry.get()
+
+            # Tạo đối tượng DanhMuc và gọi phương thức thêm
+            danh_muc = DanhMuc(id_danh_muc, ten, loai, mo_ta)
             if self.quan_ly.them_danh_muc(danh_muc):
                 messagebox.showinfo("Thành Công", "Thêm danh mục thành công!")
                 dialog.destroy()
             else:
                 messagebox.showerror("Lỗi", "ID danh mục đã tồn tại!")
 
-        # Nút xác nhận
-        submit_button = ctk.CTkButton(dialog, text="Thêm", command=submit)
+        submit_button = ctk.CTkButton(dialog, text="Xác Nhận", command=submit_them_danh_muc)
         submit_button.pack(pady=20)
 
     def xoa_danh_muc(self):
-        """Xóa danh mục"""
-        id_danh_muc = simpledialog.askstring("Xóa Danh Mục", "Nhập ID danh mục cần xóa:")
-        
-        if id_danh_muc:
-            # Gọi phương thức xóa danh mục từ quản lý
-            self.quan_ly.xoa_danh_muc(id_danh_muc)
-            messagebox.showinfo("Thành Công", "Đã xóa danh mục.")
-            
+        """Xóa danh mục với giao diện nhập liệu"""
+        # Lấy vị trí và kích thước cửa sổ chính
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Xóa Danh Mục")
+        dialog.geometry("400x200")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
+
+        # Label và Entry để nhập ID danh mục
+        id_label = ctk.CTkLabel(dialog, text="ID Danh Mục:")
+        id_label.pack(pady=(20, 5))
+
+        id_entry = ctk.CTkEntry(dialog, width=300)
+        id_entry.pack(pady=5)
+
+        # Hàm xử lý khi nhấn nút Xóa
+        def submit():
+            id_danh_muc = id_entry.get()
+            if id_danh_muc:
+                if self.quan_ly.xoa_danh_muc(id_danh_muc):
+                    messagebox.showinfo("Thành Công", "Đã xóa danh mục.")
+                    dialog.destroy()
+                else:
+                    messagebox.showerror("Lỗi", "Không tìm thấy danh mục với ID đã nhập.")
+            else:
+                messagebox.showerror("Lỗi", "Vui lòng nhập ID danh mục.")
+
+        # Nút Xóa
+        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button.pack(pady=20)
+      
     def cap_nhat_danh_muc(self):
-        """Cập nhật danh mục trong hệ thống"""
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
         # Tạo cửa sổ dialog
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Cập Nhật Danh Mục")
-        dialog.geometry("400x300")
+        dialog.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
 
         # Label hướng dẫn
         huong_dan_label = ctk.CTkLabel(
@@ -281,11 +356,18 @@ class QuanLyTaiChinhGUI:
         submit_button.pack(pady=20)
 
     def them_tai_khoan(self):
-        """Thêm tài khoản mới"""
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
         # Tạo cửa sổ dialog
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Thêm Tài Khoản")
-        dialog.geometry("400x500")
+        dialog.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
 
         # Các trường nhập liệu
         entries = [
@@ -325,11 +407,42 @@ class QuanLyTaiChinhGUI:
         submit_button.pack(pady=20)
 
     def xoa_tai_khoan(self):
-        """Xóa tài khoản"""
-        id_tai_khoan = simpledialog.askstring("Xóa Tài Khoản", "Nhập ID tài khoản cần xóa:")
-        if id_tai_khoan:
-            self.quan_ly.xoa_tai_khoan(id_tai_khoan)
-            messagebox.showinfo("Thành Công", "Đã xóa tài khoản.")
+        """Xóa tài khoản với giao diện nhập liệu"""
+        # Lấy vị trí và kích thước cửa sổ chính
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Xóa Tài Khoản")
+        dialog.geometry("400x200")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
+
+        # Label và Entry để nhập ID tài khoản
+        id_label = ctk.CTkLabel(dialog, text="ID Tài Khoản:")
+        id_label.pack(pady=(20, 5))
+
+        id_entry = ctk.CTkEntry(dialog, width=300)
+        id_entry.pack(pady=5)
+
+        # Hàm xử lý khi nhấn nút Xóa
+        def submit():
+            id_tai_khoan = id_entry.get()
+            if id_tai_khoan:
+                if self.quan_ly.xoa_tai_khoan(id_tai_khoan):
+                    messagebox.showinfo("Thành Công", "Đã xóa tài khoản.")
+                    dialog.destroy()
+                else:
+                    messagebox.showerror("Lỗi", "Không tìm thấy tài khoản với ID đã nhập.")
+            else:
+                messagebox.showerror("Lỗi", "Vui lòng nhập ID tài khoản.")
+
+        # Nút Xóa
+        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button.pack(pady=20)
 
     def xem_tai_khoan(self):
         """Hiển thị thông tin tài khoản từ file CSV"""
@@ -554,10 +667,18 @@ class QuanLyTaiChinhGUI:
             messagebox.showerror("Lỗi", f"Lỗi khi đọc file {file_path}: {e}")
 
     def them_giao_dich(self):
-        """Thêm giao dịch mới"""
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
+        # Tạo cửa sổ dialog
         dialog = ctk.CTkToplevel(self.root)
-        dialog.title("Thêm Giao Dịch")
-        dialog.geometry("400x600")
+        dialog.title("Theme Giao Dịch")
+        dialog.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
 
         entries = [
             ("ID Giao Dịch", "id"),
@@ -623,21 +744,66 @@ class QuanLyTaiChinhGUI:
         submit_button.pack(pady=20)
 
     def xoa_giao_dich(self):
-        """Xóa giao dịch"""
-        id_tai_khoan = simpledialog.askstring("Xóa Giao Dịch", "Nhập ID tài khoản:")
-        id_giao_dich = simpledialog.askstring("Xóa Giao Dịch", "Nhập ID giao dịch:")
-        
-        if id_tai_khoan and id_giao_dich:
-            self.quan_ly.xoa_giao_dich(id_tai_khoan, id_giao_dich)
-            messagebox.showinfo("Thành Công", "Đã xóa giao dịch.")
+        """Xóa giao dịch với giao diện nhập liệu"""
+        # Lấy vị trí và kích thước cửa sổ chính
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Xóa Giao Dịch")
+        dialog.geometry("400x250")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
+
+        # Label và Entry để nhập ID tài khoản
+        id_tai_khoan_label = ctk.CTkLabel(dialog, text="ID Tài Khoản:")
+        id_tai_khoan_label.pack(pady=(20, 5))
+
+        id_tai_khoan_entry = ctk.CTkEntry(dialog, width=300)
+        id_tai_khoan_entry.pack(pady=5)
+
+        # Label và Entry để nhập ID giao dịch
+        id_giao_dich_label = ctk.CTkLabel(dialog, text="ID Giao Dịch:")
+        id_giao_dich_label.pack(pady=(20, 5))
+
+        id_giao_dich_entry = ctk.CTkEntry(dialog, width=300)
+        id_giao_dich_entry.pack(pady=5)
+
+        # Hàm xử lý khi nhấn nút Xóa
+        def submit():
+            id_tai_khoan = id_tai_khoan_entry.get()
+            id_giao_dich = id_giao_dich_entry.get()
+            if id_tai_khoan and id_giao_dich:
+                if self.quan_ly.xoa_giao_dich(id_tai_khoan, id_giao_dich):
+                    messagebox.showinfo("Thành Công", "Đã xóa giao dịch.")
+                    dialog.destroy()
+                else:
+                    messagebox.showerror("Lỗi", "Không tìm thấy giao dịch hoặc tài khoản với ID đã nhập.")
+            else:
+                messagebox.showerror("Lỗi", "Vui lòng nhập đầy đủ ID tài khoản và ID giao dịch.")
+
+        # Nút Xóa
+        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button.pack(pady=20)
+
             
     def cap_nhat_giao_dich(self):
-        """Cập nhật giao dịch trong một tài khoản"""
+        
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
         # Tạo cửa sổ dialog
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Cập Nhật Giao Dịch")
-        dialog.geometry("400x400")
+        dialog.geometry("400x720")
 
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
         # Label hướng dẫn
         huong_dan_label = ctk.CTkLabel(
             dialog, 
@@ -709,11 +875,18 @@ class QuanLyTaiChinhGUI:
         submit_button.pack(pady=20)
 
     def them_khoan_vay(self):
-        """Thêm khoản vay mới"""
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
+        # Tạo cửa sổ dialog
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Thêm Khoản Vay")
-        dialog.geometry("400x700")
+        dialog.geometry("400x720")
 
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
         entries = [
             ("ID Khoản Vay", "id_khoan_vay"),
             ("Người Cho Vay", "nguoi_cho_vay"),
@@ -757,17 +930,56 @@ class QuanLyTaiChinhGUI:
         submit_button.pack(pady=20)
 
     def xoa_khoan_vay(self):
-        """Xóa khoản vay"""
-        id_khoan_vay = simpledialog.askstring("Xóa Khoản Vay", "Nhập ID khoản vay cần xóa:")
-        if id_khoan_vay:
-            self.quan_ly.xoa_khoan_vay(id_khoan_vay)
-            messagebox.showinfo("Thành Công", "Đã xóa khoản vay.")
+        """Xóa khoản vay với giao diện nhập liệu"""
+        # Lấy vị trí và kích thước cửa sổ chính
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+
+        # Tạo cửa sổ dialog
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title("Xóa Khoản Vay")
+        dialog.geometry("400x200")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
+
+        # Label và Entry để nhập ID khoản vay
+        id_label = ctk.CTkLabel(dialog, text="ID Khoản Vay:")
+        id_label.pack(pady=(20, 5))
+
+        id_entry = ctk.CTkEntry(dialog, width=300)
+        id_entry.pack(pady=5)
+
+        # Hàm xử lý khi nhấn nút Xóa
+        def submit():
+            id_khoan_vay = id_entry.get()
+            if id_khoan_vay:
+                if self.quan_ly.xoa_khoan_vay(id_khoan_vay):
+                    messagebox.showinfo("Thành Công", "Đã xóa khoản vay.")
+                    dialog.destroy()
+                else:
+                    messagebox.showerror("Lỗi", "Không tìm thấy khoản vay với ID đã nhập.")
+            else:
+                messagebox.showerror("Lỗi", "Vui lòng nhập ID khoản vay.")
+
+        # Nút Xóa
+        submit_button = ctk.CTkButton(dialog, text="Xóa", command=submit)
+        submit_button.pack(pady=20)
             
     def them_thanh_toan(self):
-        """Thêm thanh toán mới cho khoản vay"""
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
+        # Tạo cửa sổ dialog
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Thêm Thanh Toán")
-        dialog.geometry("400x300")
+        dialog.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
+        dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
 
         # Label hướng dẫn
         huong_dan_label = ctk.CTkLabel(
@@ -907,7 +1119,8 @@ class QuanLyTaiChinhGUI:
             messagebox.showerror("Lỗi", "Định dạng ngày không hợp lệ!")
         except Exception as e:
             messagebox.showerror("Lỗi", f"Lỗi khi tạo báo cáo: {e}")
-   
+
+            
     def du_bao_xu_huong(self):
         """Dự báo xu hướng tài chính và hiển thị kết quả trên GUI"""
         # Lấy dữ liệu dự báo
@@ -971,13 +1184,21 @@ class QuanLyTaiChinhGUI:
         messagebox.showinfo("Dự Báo Xu Hướng", "Dự báo xu hướng tài chính đã được cập nhật và hiển thị.")
 
     def thong_ke_tong_quat(self):
-        """Lấy thống kê tổng quát"""
         thong_ke = self.quan_ly.lay_thong_ke_tong_quat()
-        
+
+        # Lấy thông tin vị trí và kích thước của cửa sổ chính
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
         # Tạo cửa sổ thống kê
         thong_ke_window = ctk.CTkToplevel(self.root)
         thong_ke_window.title("Thống Kê Tổng Quát")
-        thong_ke_window.geometry("500x400")
+        thong_ke_window.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ mới nằm cạnh cửa sổ chính
+        thong_ke_window.geometry(f"{main_x + main_width + 10}+{main_y}")
 
         # Tạo khung cuộn để hiển thị thống kê
         scrollable_frame = ctk.CTkScrollableFrame(thong_ke_window, width=450, height=350)
@@ -1003,11 +1224,18 @@ class QuanLyTaiChinhGUI:
             value_label.pack(side="right", padx=10)
     
     def dat_muc_tieu_tiet_kiem(self):
-        """Đặt mục tiêu tiết kiệm cho một tài khoản"""
-        # Tạo cửa sổ dialog
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
+        # Tạo cửa sổ thống kê
         dialog = ctk.CTkToplevel(self.root)
-        dialog.title("Đặt Mục Tiêu Tiết Kiệm")
-        dialog.geometry("400x300")
+        dialog.title("Mục Tiêu Tiết Kiệm")
+        dialog.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ mới nằm cạnh cửa sổ chính
+        dialog.geometry(f"{main_x + main_width + 10}+{main_y}")
 
         # Label hướng dẫn
         huong_dan_label = ctk.CTkLabel(
@@ -1067,11 +1295,18 @@ class QuanLyTaiChinhGUI:
         messagebox.showinfo("Nhập CSV", "Nhập dữ liệu CSV thành công!")
 
     def thiet_lap_sau_lo(self):
-        """Thiết lập phương pháp sáu lọ"""
-        # Tạo cửa sổ dialog
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
+        # Tạo cửa sổ thống kê
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Thiết Lập Phương Pháp Sáu Lọ")
-        dialog.geometry("400x300")
+        dialog.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ mới nằm cạnh cửa sổ chính
+        dialog.geometry(f"{main_x + main_width + 10}+{main_y}")
 
         # Label hướng dẫn
         huong_dan_label = ctk.CTkLabel(
@@ -1112,9 +1347,18 @@ class QuanLyTaiChinhGUI:
             return
 
         # Tạo cửa sổ hiển thị
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
+        # Tạo cửa sổ thống kê
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Phân Bổ Sáu Lọ")
-        dialog.geometry("500x400")
+        dialog.geometry("500x720")
+
+        # Đặt vị trí của cửa sổ mới nằm cạnh cửa sổ chính
+        dialog.geometry(f"{main_x + main_width + 10}+{main_y}")
 
         # Tiêu đề
         title_label = ctk.CTkLabel(
@@ -1168,10 +1412,18 @@ class QuanLyTaiChinhGUI:
     
     def chuyen_tien_giua_cac_lo(self):
         """Chuyển tiền giữa các lọ"""
-        # Tạo cửa sổ dialog
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_width = self.root.winfo_width()
+        main_height = self.root.winfo_height()
+
+        # Tạo cửa sổ thống kê
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Chuyển Tiền Giữa Các Lọ")
-        dialog.geometry("400x300")
+        dialog.geometry("400x720")
+
+        # Đặt vị trí của cửa sổ mới nằm cạnh cửa sổ chính
+        dialog.geometry(f"{main_x + main_width + 10}+{main_y}")
 
         # Label hướng dẫn
         huong_dan_label = ctk.CTkLabel(
