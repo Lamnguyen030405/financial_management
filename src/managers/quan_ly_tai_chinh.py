@@ -38,6 +38,7 @@ class QuanLyTaiChinh:
             if tk._id == id_tai_khoan:
                 self._tai_khoan.remove(tk)        
                 self.xuat_tai_khoan_csv()
+                self.xuat_giao_dich_csv()
                 return True
         return False
 
@@ -451,14 +452,14 @@ class QuanLyTaiChinh:
                             "tong_chi": 0
                         }
                     
-                    if giao_dich.lay_loai() == "thu nhập":
+                    if giao_dich.lay_loai() == "Thu nhập":
                         bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_thu"] += giao_dich.lay_so_tien()
-                    elif giao_dich.lay_loai() == "chi tiêu":
+                    elif giao_dich.lay_loai() == "Chi tiêu":
                         bao_cao["giao_dich_theo_danh_muc"][giao_dich._danh_muc]["tong_chi"] -= giao_dich.lay_so_tien()
             
             bao_cao["chi_tiet_tai_khoan"].append(chi_tiet_tai_khoan)
         
-        return bao_cao
+        return bao_cao  
 
     def dat_muc_tieu_tiet_kiem(self, id_tai_khoan: str, so_tien: float):
         """
@@ -557,7 +558,7 @@ class QuanLyTaiChinh:
             id_tai_khoan=tai_khoan_nguon._id,
             so_tien=so_tien,
             loai="Chi tiêu",
-            danh_muc="",
+            danh_muc="Chuyển khoản",
             ngay=datetime.now(),
             ghi_chu=f"Chuyển tiền từ {tai_khoan_nguon._id} đến {tai_khoan_dich._id}"
         )
@@ -567,7 +568,7 @@ class QuanLyTaiChinh:
             id_tai_khoan=tai_khoan_dich._id,
             so_tien=so_tien,
             loai="Thu nhập",
-            danh_muc="",
+            danh_muc="Chuyển khoản",
             ngay=datetime.now(),
             ghi_chu=f"Nhận tiền từ {tai_khoan_nguon._id}"
         )
@@ -575,6 +576,7 @@ class QuanLyTaiChinh:
         # Lưu giao dịch
         tai_khoan_nguon.them_giao_dich(giao_dich_chuyen)
         tai_khoan_dich.them_giao_dich(giao_dich_nhan)
+        
         tai_khoan_dich.cap_nhat_so_du()
         tai_khoan_nguon.cap_nhat_so_du()
         self.xuat_tai_khoan_csv()
