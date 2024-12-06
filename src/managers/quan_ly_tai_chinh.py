@@ -510,6 +510,7 @@ class QuanLyTaiChinh:
                 "id": khoan_vay._id,
                 "so_tien_con_lai": khoan_vay.lay_so_tien_con_lai(),
                 "nguoi_cho_vay": khoan_vay._nguoi_cho_vay,
+                "nguoi_vay": khoan_vay._nguoi_vay,
                 "ngay_den_han": khoan_vay._ngay_den_han
             }
             du_bao["canh_bao_no"].append(canh_bao)

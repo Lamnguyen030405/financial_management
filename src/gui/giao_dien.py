@@ -1,4 +1,5 @@
-﻿import customtkinter as ctk
+﻿from PIL import Image
+import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox, simpledialog
@@ -21,7 +22,9 @@ class QuanLyTaiChinhGUI:
         # Cửa sổ chính
         self.root = ctk.CTk()
         self.root.title("Quản Lý Tài Chính")
-        self.root.geometry("1280x720")
+        screen_height = self.root.winfo_screenheight()
+        screen_width = self.root.winfo_screenwidth()
+        self.root.geometry(f"{screen_width * 2 // 3}x{screen_height * 2 // 3}+0+{screen_height // 2 - screen_height * 2 // 6}")
 
         # Thêm hiệu ứng background gradient
         self.create_gradient_background()
@@ -63,9 +66,11 @@ class QuanLyTaiChinhGUI:
         # Tiêu đề với hiệu ứng gradient
         self.title_label = ctk.CTkLabel(
             self.sidebar_frame, 
-            text="HỆ THỐNG\nQUẢN LÝ\nTÀI CHÍNH", 
-            font=("Helvetica", 24, "bold"),
-            text_color=self.generate_gradient_color()
+            text="Smart  \nMoney  ", 
+            font=("Helvetica", 32, "bold"),
+            text_color=self.generate_gradient_color(),
+            image=ctk.CTkImage(Image.open("res/coin.png"), size=(64, 64)),
+            compound="right"
         )
         self.title_label.pack(pady=30)
 
@@ -816,6 +821,7 @@ class QuanLyTaiChinhGUI:
         dialog = ctk.CTkToplevel(self.root)
         dialog.title("Theme Giao Dịch")
         dialog.geometry("400x720")
+        dialog.wm_attributes("-topmost", True)
 
         # Đặt vị trí của cửa sổ dialog nằm kế bên cửa sổ chính
         dialog.geometry(f"+{main_x + main_width + 10}+{main_y}")
@@ -1357,15 +1363,16 @@ class QuanLyTaiChinhGUI:
         no_frame.pack(padx=20, pady=10, fill="both", expand=True)
 
         # Bảng cảnh báo nợ
-        no_table = ttk.Treeview(no_frame, columns=("ID", "Số Tiền Còn Lại", "Người Cho Vay", "Ngày Đến Hạn"), show='headings')
+        no_table = ttk.Treeview(no_frame, columns=("ID", "Số Tiền Còn Lại", "Người Cho Vay", "Người Vay","Ngày Đến Hạn"), show='headings')
         no_table.pack(fill="both", expand=True)
         no_table.heading("ID", text="ID")
         no_table.heading("Số Tiền Còn Lại", text="Số Tiền Còn Lại")
         no_table.heading("Người Cho Vay", text="Người Cho Vay")
+        no_table.heading("Người Vay", text="Người Vay")
         no_table.heading("Ngày Đến Hạn", text="Ngày Đến Hạn")
 
         for canh_bao in du_bao["canh_bao_no"]:
-            no_table.insert("", "end", values=(canh_bao["id"], canh_bao["so_tien_con_lai"], canh_bao["nguoi_cho_vay"], canh_bao["ngay_den_han"]))
+            no_table.insert("", "end", values=(canh_bao["id"], canh_bao["so_tien_con_lai"], canh_bao["nguoi_cho_vay"], canh_bao["nguoi_vay"],canh_bao["ngay_den_han"]))
 
         messagebox.showinfo("Dự Báo Xu Hướng", "Dự báo xu hướng tài chính đã được cập nhật và hiển thị.")
 
