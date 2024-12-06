@@ -1,5 +1,6 @@
 ﻿import csv
 from datetime import datetime
+import math
 from typing import List
 from csv import writer
 from src.models.tai_khoan import TaiKhoan
@@ -483,17 +484,16 @@ class QuanLyTaiChinh:
         }
         
         # Xu huong chi tieu theo danh muc
+        danh_muc_chi_tieu = {}
         for tai_khoan in self._tai_khoan:
-            danh_muc_chi_tieu = {}
             for giao_dich in tai_khoan.lay_giao_dich():
                 if giao_dich.lay_loai() == "Chi tiêu":
-                    if giao_dich._danh_muc not in danh_muc_chi_tieu:
-                        danh_muc_chi_tieu[giao_dich._danh_muc] = []
+                    danh_muc_chi_tieu.setdefault(giao_dich._danh_muc, [])
                     danh_muc_chi_tieu[giao_dich._danh_muc].append(giao_dich.lay_so_tien())
             
-            for danh_muc, chi_tieu in danh_muc_chi_tieu.items():
+            for danh_muc, chi_tieu in danh_muc_chi_tieu.items():  
                 du_bao["xu_huong_chi_tieu"][danh_muc] = {
-                    "trung_binh": sum(chi_tieu) / len(chi_tieu) if chi_tieu else 0,
+                    "trung_binh": round(sum(chi_tieu) / len(chi_tieu), 4) if chi_tieu else 0,
                     "tong_chi": sum(chi_tieu)
                 }
         

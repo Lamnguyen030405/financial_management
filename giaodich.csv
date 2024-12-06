@@ -3,8 +3,10 @@ GD01,TK001,3000.0,Chi tiêu,Ăn uống,2024-01-23 00:00:00,Bữa trưa văn phò
 GD11,TK001,1500.0,Chi tiêu,Giải trí,2024-02-03 00:00:00,Vé xem concert
 GD02,TK002,8000.0,Thu nhập,Lương,2024-01-25 00:00:00,Lương tháng 1
 GD12,TK002,3000.0,Chi tiêu,Hóa đơn,2024-02-04 00:00:00,Hóa đơn nước
+GD20241206110149,TK002,400.0,Chi tiêu,Chuyển khoản,2024-12-06 11:01:49,Chuyển tiền từ TK002 đến TK003
 GD03,TK003,1200.0,Chi tiêu,Giải trí,2024-01-26 00:00:00,Đi xem phim cuối tuần
 GD13,TK003,800.0,Thu nhập,Lãi suất,2024-02-05 00:00:00,Lãi tiết kiệm tháng 2
+GD20241206110149,TK003,400.0,Thu nhập,Chuyển khoản,2024-12-06 11:01:49,Nhận tiền từ TK002
 GD04,TK004,2500.0,Chi tiêu,Hóa đơn,2024-01-27 00:00:00,Hóa đơn tiền điện
 GD14,TK004,6000.0,Chi tiêu,Mua sắm,2024-02-06 00:00:00,Mua quần áo mới
 GD05,TK005,500.0,Thu nhập,Lãi suất,2024-01-28 00:00:00,Lãi tiết kiệm tháng 1
